@@ -35,4 +35,9 @@ class StudentParent extends Authenticatable
         'date_of_birth' => 'date',
         'last_login_date' => 'datetime',
     ];
+
+    public function students()
+    {
+        return $this->hasMany(User::class, 'student_parent_id');
+    }
 }

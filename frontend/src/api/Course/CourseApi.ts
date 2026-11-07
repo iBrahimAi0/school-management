@@ -1,6 +1,6 @@
 import { axiosClient } from "../axios";
 import { isAxiosError } from "axios";
-import { CourseValuesType } from "@/types/CourseValuesType";
+import { CourseValuesType } from "@/types/AdminTypes/CourseValuesType";
 
 const CourseApi = {
   addCourse: async (values: CourseValuesType) => {
@@ -35,9 +35,15 @@ const CourseApi = {
       throw error;
     }
   },
-  deteleCourse: async (id: string) => {
+  deleteCourse: async (id: string) => {
+    return await axiosClient.delete(`/api/courses/${id}`);
+  },
+  deteleCourse: function (id: string) {
+    return this.deleteCourse(id);
+  },
+  getTeacherCourses: async (id: number | undefined) => {
     try {
-      return await axiosClient.delete(`/api/courses/${id}`);
+      return await axiosClient.get(`/api/teachers/${id}/courses`);
     } catch (error: any) {
       if (isAxiosError(error)) {
         console.log("❌ STATUS:", error.response?.status);
@@ -49,6 +55,18 @@ const CourseApi = {
         console.log("❌ UNKNOWN ERROR:", error);
       }
 
+      throw error;
+    }
+  },
+  getTeacherCourseStudents: async (
+    teacherId: number | undefined,
+    courseId: number | undefined,
+  ) => {
+    try {
+      return await axiosClient.get(
+        `/api/teachers/${teacherId}/course/${courseId}/students`,
+      );
+    } catch (error: any) {
       throw error;
     }
   },

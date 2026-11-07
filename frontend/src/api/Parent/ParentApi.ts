@@ -1,4 +1,4 @@
-import { ParentValuesType } from "@/types/ParetnValuesType";
+import { ParentValuesType } from "@/types/AdminTypes/ParentValuesType";
 import { axiosClient } from "../axios";
 import { isAxiosError } from "axios";
 
@@ -35,22 +35,11 @@ const ParentApi = {
       throw error;
     }
   },
-  deteleParent: async (id: string) => {
-    try {
-      return await axiosClient.delete(`/api/parents/${id}`);
-    } catch (error: any) {
-      if (isAxiosError(error)) {
-        console.log("❌ STATUS:", error.response?.status);
-        console.log("❌ DATA:", error.response?.data);
-        console.log("❌ HEADERS:", error.response?.headers);
-        console.log("❌ REQUEST URL:", error.config?.url);
-        console.log("❌ METHOD:", error.config?.method);
-      } else {
-        console.log("❌ UNKNOWN ERROR:", error);
-      }
-
-      throw error;
-    }
+  deleteParent: async (id: string) => {
+    return await axiosClient.delete(`/api/parents/${id}`);
+  },
+  deteleParent: function (id: string) {
+    return this.deleteParent(id);
   },
 };
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAttendanceSessionRequest;
+use App\Http\Requests\UpdateAttendanceSessionRequest;
 use App\Http\Resources\AttendanceSessionResource;
 use App\Models\AttendanceSession;
 use Illuminate\Http\Request;
@@ -13,13 +15,34 @@ class AttendanceSessionController extends Controller
      */
     public function index()
     {
-        $attendanceSessions = AttendanceSession::with(['classe:id,name,code', 'course:id,name', 'teacher:id,firs_name,last_name'])
+        $attendanceSessions = AttendanceSession::with([
+            'classe:id,name,code',
+            'course:id,name',
+            'teacher:id,first_name,last_name',
+        ])
             ->latest()
             ->get();
+
         return response()->json([
             'attendanceSessions' => AttendanceSessionResource::collection($attendanceSessions),
-            'message' => 'Attendance Session List sent successfully'
+            'message' => 'Attendance Sessions list sent successfully',
+        ]);
+    }
 
+    public function teacherSessions($teacherId)
+    {
+        $teacherSessions = AttendanceSession::with([
+            'classe:id,name,code',
+            'course:id,name',
+            'teacher:id,first_name,last_name',
+        ])
+            ->where('teacher_id', $teacherId)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'teacherSessions' => AttendanceSessionResource::collection($teacherSessions),
+            'message' => 'Teacher Sessions list sent successfully',
         ]);
     }
 
@@ -34,7 +57,7 @@ class AttendanceSessionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAttendanceSessionRequest $request)
     {
         $data = $request->validated();
         $attendanceSession = new AttendanceSessionResource(AttendanceSession::create($data));
@@ -63,7 +86,7 @@ class AttendanceSessionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AttendanceSession $attendanceSession)
+    public function update(UpdateAttendanceSessionRequest $request, AttendanceSession $attendanceSession)
     {
         $data = $request->validated();
         $attendanceSession->update($data);

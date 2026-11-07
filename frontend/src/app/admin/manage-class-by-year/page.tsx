@@ -5,9 +5,9 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
 import { FieldDescription, FieldLegend } from "@/components/ui/field";
-import { ClassTypeCourseFormValues } from "@/types/ClassTypeCourseValuesTypes";
-import ClassTypeCoursesList from "@/components/ClassTypeCourseComponents/ClassTypeCoursesList";
-import { ClassTypeCourseForm } from "@/components/ClassTypeCourseComponents/ClassTypeCourseForm";
+import { ClassTypeCourseFormValues } from "@/types/AdminTypes/ClassTypeCourseValuesTypes";
+import ClassTypeCoursesList from "@/components/AdminParts/ClassTypeCourseComponents/ClassTypeCoursesList";
+import { ClassTypeCourseForm } from "@/components/AdminParts/ClassTypeCourseComponents/ClassTypeCourseForm";
 
 export default function ManageClassTypeCourse() {
   const [isActive, setIsActive] = useState(true);

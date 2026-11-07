@@ -30,7 +30,8 @@ class StoreClasseRequest extends FormRequest
                 'max:50',
             ],
             'code' => ['required', 'unique:classes,code', 'min:4', 'max:20'],
-            'class_type_id' => 'exists:class_types,id'
+            'class_type_id' => ['nullable', 'exists:class_types,id'],
+            'teacher_id' => ['nullable', 'exists:teachers,id'],
         ];
     }
 }

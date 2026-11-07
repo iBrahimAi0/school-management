@@ -1,19 +1,18 @@
-import { axiosClient } from "../axios";
-import { isAxiosError } from "axios";
-import { ExamType } from "@/types/ExamValuesType";
 import { objectToFormData } from "@/lib/formData";
+import { axiosClient } from "../axios";
+import { ExamFormValuesType, ExamType } from "@/types/AdminTypes/ExamValuesType";
 
 const ExamApi = {
   getExams: () => axiosClient.get("/api/exams"),
 
   // CREATE (Sends FormData as POST)
-  addExam: (values: ExamType) => {
+  addExam: (values: ExamFormValuesType | ExamType) => {
     const payload = objectToFormData(values);
     return axiosClient.post("/api/exams", payload);
   },
 
   // UPDATE (Sends FormData as POST with _method: 'PUT' for Laravel)
-  updateExam: (id: string | number, values: ExamType) => {
+  updateExam: (id: string | number, values: ExamFormValuesType | ExamType) => {
     const payload = objectToFormData(values, "PUT");
     return axiosClient.post(`/api/exams/${id}`, payload);
   },

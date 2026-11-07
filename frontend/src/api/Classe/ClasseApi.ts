@@ -35,23 +35,38 @@ const ClasseApi = {
       throw error;
     }
   },
-  deteleClasse: async (id: string) => {
+  deleteClasse: async (id: string) => {
+    return await axiosClient.delete(`/api/classes/${id}`);
+  },
+  deteleClasse: function (id: string) {
+    return this.deleteClasse(id);
+  },
+  getTeacherClasses: async (id: number | undefined) => {
     try {
-      return await axiosClient.delete(`/api/classes/${id}`);
+      return await axiosClient.get(`/api/teachers/${id}/classes`);
     } catch (error: any) {
-      if (isAxiosError(error)) {
-        console.log("❌ STATUS:", error.response?.status);
-        console.log("❌ DATA:", error.response?.data);
-        console.log("❌ HEADERS:", error.response?.headers);
-        console.log("❌ REQUEST URL:", error.config?.url);
-        console.log("❌ METHOD:", error.config?.method);
-      } else {
-        console.log("❌ UNKNOWN ERROR:", error);
-      }
-
       throw error;
     }
   },
+  getTeacherStudentsClasse: async (
+    teacherId: number | undefined,
+    classeId: number | undefined,
+  ) => {
+    try {
+      return await axiosClient.get(
+        `/api/teachers/${teacherId}/classe/${classeId}/students`,
+      );
+    } catch (error: any) {
+      throw error;
+    }
+  },
+  /*   getTeacherStudents: async (classId: number | undefined) => {
+    try {
+      return await axiosClient.get(`/classes/students/${classId}`);
+    } catch (error: any) {
+      throw error;
+    }
+  }, */
 };
 
 export default ClasseApi;

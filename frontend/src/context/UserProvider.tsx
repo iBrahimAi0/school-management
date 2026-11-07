@@ -1,5 +1,6 @@
 "use client";
 
+import AttendanceRecordApi from "@/api/AttendanceRecord/AttendanceRecordApi";
 import AttendanceSessionApi from "@/api/AttendanceSession/AttendanceSessionApi";
 import ClasseApi from "@/api/Classe/ClasseApi";
 import ClassTypeApi from "@/api/ClassType/ClassTypeApi";
@@ -11,18 +12,19 @@ import ParentApi from "@/api/Parent/ParentApi";
 import { StudentApi } from "@/api/Student/StudentApi";
 import TeacherApi from "@/api/Teacher/TeacherApi";
 import { UserApi } from "@/api/User/UserApi";
+import { AttendanceRecordFormValues } from "@/types/AdminTypes/AttendanceRecordValuesType";
 import {
   AttendanceSession,
   AttendanceSessionFormValues,
-} from "@/types/AttendanceSessionValuesType";
-import { ClassTypeCourseFormValues } from "@/types/ClassTypeCourseValuesTypes";
-import { ClassTypeValuesType } from "@/types/ClassTypeValuesType";
-import { CourseValuesType } from "@/types/CourseValuesType";
-import { ExamRecordType } from "@/types/ExamRecordValuesType";
-import { ExamType } from "@/types/ExamValuesType";
-import { ParentValuesType } from "@/types/ParetnValuesType";
-import { StudentValuesType } from "@/types/StudentValuesType";
-import { TeacherValuesType } from "@/types/TeacherValuesType";
+} from "@/types/AdminTypes/AttendanceSessionValuesType";
+import { ClassTypeCourseFormValues } from "@/types/AdminTypes/ClassTypeCourseValuesTypes";
+import { ClassTypeValuesType } from "@/types/AdminTypes/ClassTypeValuesType";
+import { CourseValuesType } from "@/types/AdminTypes/CourseValuesType";
+import { ExamRecordType } from "@/types/AdminTypes/ExamRecordValuesType";
+import { ExamFormValuesType, ExamType } from "@/types/AdminTypes/ExamValuesType";
+import { ParentValuesType } from "@/types/AdminTypes/ParentValuesType";
+import { StudentValuesType } from "@/types/AdminTypes/StudentValuesType";
+import { TeacherValuesType } from "@/types/AdminTypes/TeacherValuesType";
 import { valuesType } from "@/types/ValuesType";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -66,8 +68,8 @@ interface UserStateContextType {
   updateClasse: (classeValues: ClassTypeValuesType, id: string) => Promise<any>;
   addCourse: (courseValues: CourseValuesType) => Promise<any>;
   updateCourse: (courseValues: CourseValuesType, id: string) => Promise<any>;
-  addExam: (examValues: ExamType) => Promise<any>;
-  updateExam: (id: string, examValues: ExamType) => Promise<any>;
+  addExam: (examValues: ExamFormValuesType | ExamType) => Promise<any>;
+  updateExam: (id: string, examValues: ExamFormValuesType | ExamType) => Promise<any>;
   addExamRecord: (examRecordValues: ExamRecordType) => Promise<any>;
   updateExamRecord: (
     id: string,
@@ -86,6 +88,13 @@ interface UserStateContextType {
   ) => Promise<any>;
   addAttendanceSession: (
     attendanceSessionValues: AttendanceSessionFormValues,
+  ) => Promise<any>;
+  updateAttendanceRecord: (
+    id: string,
+    attendanceRecordValues: AttendanceRecordFormValues,
+  ) => Promise<any>;
+  addAttendanceRecord: (
+    attendanceRecordValues: AttendanceRecordFormValues,
   ) => Promise<any>;
 }
 
@@ -133,16 +142,31 @@ export const UserProvider = ({
 
   const login = async ({ email, password }: valuesType) => {
     try {
-      // 2. Submit credentials (Login returns role and user)
+      setLoader(true);
+      // 1. Submit credentials to API (returns token, user, role)
       const authData = await UserApi.login({ email, password });
+      const userRole = (authData?.role || "").toLowerCase();
+
       setUser(authData.user);
-      setRole(authData.role);
+      setRole(userRole as Role);
 
-      // 3. Store routing hint cookie for Next.js middleware
-      document.cookie = `user_role=${authData.role}; path=/; max-age=604800; SameSite=Lax`;
+      // 2. Store cookie for server-side Next.js proxy
+      document.cookie = `user_role=${userRole}; path=/; max-age=604800; SameSite=Lax`;
 
-      // 4. Redirect using returned authData.role
-      router.push(`/${authData.role}/dashboard`);
+      // 3. Check role and redirect to the corresponding dashboard link
+      if (userRole === "admin") {
+        router.replace("/admin/dashboard");
+      } else if (userRole === "teacher") {
+        router.replace("/teacher/dashboard");
+      } else if (userRole === "parent") {
+        router.replace("/parent/dashboard");
+      } else if (userRole === "student") {
+        router.replace("/student/dashboard");
+      } else {
+        router.replace("/login");
+      }
+
+      return authData;
     } catch (error: unknown) {
       console.error("Login failed:", error);
       throw error;
@@ -327,7 +351,7 @@ export const UserProvider = ({
     }
   };
 
-  const addExam = async (values: ExamType) => {
+  const addExam = async (values: ExamFormValuesType | ExamType) => {
     try {
       const response = await ExamApi.addExam(values);
       return response;
@@ -338,7 +362,10 @@ export const UserProvider = ({
       setLoader(false);
     }
   };
-  const updateExam = async (id: string, values: ExamType) => {
+  const updateExam = async (
+    id: string,
+    values: ExamFormValuesType | ExamType,
+  ) => {
     try {
       const response = await ExamApi.updateExam(id, values);
       return response;
@@ -430,6 +457,34 @@ export const UserProvider = ({
       setLoader(false);
     }
   };
+  const addAttendanceRecord = async (values: AttendanceRecordFormValues) => {
+    try {
+      const response = await AttendanceRecordApi.addAttendanceRecord(values);
+      return response;
+    } catch (error: unknown) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoader(false);
+    }
+  };
+  const updateAttendanceRecord = async (
+    id: string,
+    values: AttendanceRecordFormValues,
+  ) => {
+    try {
+      const response = await AttendanceRecordApi.updateAttendanceRecord(
+        id,
+        values,
+      );
+      return response;
+    } catch (error: unknown) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoader(false);
+    }
+  };
 
   return (
     <UserContext.Provider
@@ -459,6 +514,8 @@ export const UserProvider = ({
         updateClassTypeCourse,
         addAttendanceSession,
         updateAttendanceSession,
+        addAttendanceRecord,
+        updateAttendanceRecord,
       }}>
       {children}
     </UserContext.Provider>

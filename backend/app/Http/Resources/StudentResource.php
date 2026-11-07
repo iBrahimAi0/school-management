@@ -30,6 +30,11 @@ class StudentResource extends JsonResource
                     'last_name' => $this->studentParent->last_name,
                 ];
             }),
+            'classe' => $this->classe ? [
+                'id' => $this->classe->id,
+                'name' => $this->classe->name,
+                'code' => $this->classe->code,
+            ] : null,
             'updated_at' => $this->updated_at,
 
         ];

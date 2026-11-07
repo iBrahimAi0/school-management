@@ -31,5 +31,3 @@ export const StudentSchema = z
     message: "Passwords do not match",
     path: ["password_confirmation"],
   });
-
-export type StudentValues = z.infer<typeof StudentSchema>;

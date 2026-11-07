@@ -5,9 +5,9 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
 import { FieldDescription, FieldLegend } from "@/components/ui/field";
-import StudentsList from "@/components/StudentComponents/StudentsList";
-import { StudentsForm } from "@/components/StudentComponents/StudentsForm";
-import { StudentValuesType } from "@/types/StudentValuesType";
+import StudentsList from "@/components/AdminParts/StudentComponents/StudentsList";
+import { StudentsForm } from "@/components/AdminParts/StudentComponents/StudentsForm";
+import { StudentTypes } from "@/types/AdminTypes/StudentValuesType";
 
 export default function ManageParents() {
   const [isActive, setIsActive] = useState(true);
@@ -37,7 +37,7 @@ export default function ManageParents() {
               <FieldDescription>Here you can create a student</FieldDescription>
             </div>
             <StudentsForm
-              handleSubmit={(values: StudentValuesType) => addStudent(values)}
+              handleSubmit={(values: StudentTypes) => addStudent(values)}
               mode={"create"}
             />
           </div>

@@ -19,7 +19,9 @@ class MultiAuthController extends Controller
         // Executes validation, rate-limiting, and multi-guard resolution
         $authData = $request->authenticate();
 
-        $request->session()->regenerate();
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
         $user = $authData['user'];
 
         $abilities = TokenAbilities::forRole($authData['role']);

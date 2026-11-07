@@ -5,12 +5,12 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
 import { FieldDescription, FieldLegend } from "@/components/ui/field";
-import TeachersList from "@/components/TeacherComponents/TeachersList";
-import { TeachersForm } from "@/components/TeacherComponents/TeachersForm";
-import { TeacherValuesType } from "@/types/TeacherValuesType";
-import ClassTypesList from "@/components/ClassTypeComponents/ClassTypesList";
-import { ClassTypeForm } from "@/components/ClassTypeComponents/ClassTypeForm";
-import { ClassTypeValuesType } from "@/types/ClassTypeValuesType";
+import TeachersList from "@/components/AdminParts/TeacherComponents/TeachersList";
+import { TeachersForm } from "@/components/AdminParts/TeacherComponents/TeachersForm";
+import { TeacherValuesType } from "@/types/AdminTypes/TeacherValuesType";
+import ClassTypesList from "@/components/AdminParts/ClassTypeComponents/ClassTypesList";
+import { ClassTypeForm } from "@/components/AdminParts/ClassTypeComponents/ClassTypeForm";
+import { ClassTypeValuesType } from "@/types/AdminTypes/ClassTypeValuesType";
 
 export default function ManageParents() {
   const [isActive, setIsActive] = useState(true);

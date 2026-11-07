@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\MultiAuthController;
+use App\Http\Controllers\AttendanceRecordController;
+use App\Http\Controllers\AttendanceSessionController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\ClasseTypeController;
 use App\Http\Controllers\ClassTypeCourseController;
@@ -91,6 +93,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/students', [StudentController::class, 'index'])
         ->middleware('abilities:students:read');
 
+    //all students related to the teacher
+
+    Route::get('/teacher/{teacherId}/students', [StudentController::class, 'teacherStudents'])
+        ->middleware('abilities:students:read');
+
     Route::post('/students', [StudentController::class, 'store'])
         ->middleware('abilities:students:create');
 
@@ -135,11 +142,20 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('abilities:class-type:delete');
 });
 
+
+
+
 //Classe routes 
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/classes', [ClasseController::class, 'index'])
         ->middleware('abilities:classe:read');
+
+    Route::get('/teachers/{teacherId}/classes', [ClasseController::class, 'teacherClasses'])
+        ->middleware(['auth:sanctum', 'abilities:classes:read']);
+
+    Route::get('/teachers/{teacherId}/classe/{classeId}/students', [StudentController::class, 'teacherStudentsClasse'])
+        ->middleware('abilities:students:read');
 
     Route::post('/classes', [ClasseController::class, 'store'])
         ->middleware('abilities:classe:create');
@@ -159,6 +175,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/courses', [CourseController::class, 'index'])
         ->middleware('abilities:course:read');
 
+    Route::get('/teachers/{teacherId}/courses', [CourseController::class, 'teacherCourses'])
+        ->middleware('abilities:courses:read');
+
+
+    Route::get('/teachers/{teacherId}/course/{courseId}/students', [CourseController::class, 'teacherCourseStudents'])
+        ->middleware('abilities:students:read');
+    Route::get('/teachers/{teacherId}/courses/{courseId}/students', [CourseController::class, 'teacherCourseStudents'])
+        ->middleware('abilities:students:read');
     Route::post('/courses', [CourseController::class, 'store'])
         ->middleware('abilities:course:create');
 
@@ -223,31 +247,34 @@ Route::middleware('auth:sanctum')->group(function () {
 //Attendance Session routes 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/attendanceSessions', [AttendanceSession::class, 'index'])
+    Route::get('/attendanceSessions', [AttendanceSessionController::class, 'index'])
         ->middleware('abilities:attendanceSession:read');
 
-    Route::post('/attendanceSessions', [AttendanceSession::class, 'store'])
+    Route::get('/teacher/{teacherId}/attendanceSessions', [AttendanceSessionController::class, 'teacherSessions'])
+        ->middleware('abilities:attendanceSession:read');
+
+    Route::post('/attendanceSessions', [AttendanceSessionController::class, 'store'])
         ->middleware('abilities:attendanceSession:create');
 
-    Route::put('/attendanceSessions/{attendanceSession}', [AttendanceSession::class, 'update'])
+    Route::put('/attendanceSessions/{attendanceSession}', [AttendanceSessionController::class, 'update'])
         ->middleware('abilities:attendanceSession:update');
 
-    Route::delete('/attendanceSessions/{attendanceSession}', [AttendanceSession::class, 'destroy'])
+    Route::delete('/attendanceSessions/{attendanceSession}', [AttendanceSessionController::class, 'destroy'])
         ->middleware('abilities:attendanceSession:delete');
 });
 
 //Attendance Record routes 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/attendanceRecords', [AttendanceRecord::class, 'index'])
+    Route::get('/attendanceRecords', [AttendanceRecordController::class, 'index'])
         ->middleware('abilities:attendanceRecord:read');
 
-    Route::post('/attendanceRecords', [AttendanceRecord::class, 'store'])
+    Route::post('/attendanceRecords', [AttendanceRecordController::class, 'store'])
         ->middleware('abilities:attendanceRecord:create');
 
-    Route::put('/attendanceRecords/{attendanceRecord}', [AttendanceRecord::class, 'update'])
+    Route::put('/attendanceRecords/{attendanceRecord}', [AttendanceRecordController::class, 'update'])
         ->middleware('abilities:attendanceRecord:update');
 
-    Route::delete('/attendanceRecords/{attendanceRecord}', [AttendanceRecord::class, 'destroy'])
+    Route::delete('/attendanceRecords/{attendanceRecord}', [AttendanceRecordController::class, 'destroy'])
         ->middleware('abilities:attendanceRecord:delete');
 });

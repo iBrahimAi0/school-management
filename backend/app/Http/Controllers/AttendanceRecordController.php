@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAttendanceRecordRequest;
+use App\Http\Requests\UpdateAttendanceRecordRequest;
 use App\Http\Resources\AttendanceRecordResource;
 use App\Models\AttendanceRecord;
 use Illuminate\Http\Request;
@@ -13,9 +15,11 @@ class AttendanceRecordController extends Controller
      */
     public function index()
     {
-        $attendanceRecords = AttendanceRecord::with(['attendanceSession:id,name,code', 'student:id,firs_name,last_name'])
-            ->latest()
-            ->get();
+        $attendanceRecords = AttendanceRecord::with([
+            'student',
+            'attendanceSession.course',
+        ])->get();
+
         return response()->json([
             'attendanceRecords' => AttendanceRecordResource::collection($attendanceRecords),
             'message' => 'Attendance Record List sent successfully'
@@ -34,12 +38,12 @@ class AttendanceRecordController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAttendanceRecordRequest $request)
     {
         $data = $request->validated();
         $attendanceRecord = new AttendanceRecordResource(AttendanceRecord::create($data));
         return response()->json([
-            'attendanceSession' => $attendanceRecord,
+            'attendanceRecord' => $attendanceRecord,
             'message' => 'Attendance Record created successfully'
         ]);
     }
@@ -63,7 +67,7 @@ class AttendanceRecordController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AttendanceRecord $attendanceRecord)
+    public function update(UpdateAttendanceRecordRequest $request, AttendanceRecord $attendanceRecord)
     {
         $data = $request->validated();
         $attendanceRecord->update($data);

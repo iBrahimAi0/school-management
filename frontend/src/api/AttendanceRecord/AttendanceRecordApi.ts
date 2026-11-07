@@ -1,6 +1,6 @@
 import { axiosClient } from "../axios";
 import { isAxiosError } from "axios";
-import { AttendanceRecordFormValues } from "@/types/AttendanceRecordValuesType";
+import { AttendanceRecordFormValues } from "@/types/AdminTypes/AttendanceRecordValuesType";
 
 const AttendanceRecordApi = {
   addAttendanceRecord: async (values: AttendanceRecordFormValues) => {
@@ -38,22 +38,11 @@ const AttendanceRecordApi = {
       throw error;
     }
   },
-  deteleAttendanceRecord: async (id: string) => {
-    try {
-      return await axiosClient.delete(`/api/attendanceRecords/${id}`);
-    } catch (error: any) {
-      if (isAxiosError(error)) {
-        console.log("❌ STATUS:", error.response?.status);
-        console.log("❌ DATA:", error.response?.data);
-        console.log("❌ HEADERS:", error.response?.headers);
-        console.log("❌ REQUEST URL:", error.config?.url);
-        console.log("❌ METHOD:", error.config?.method);
-      } else {
-        console.log("❌ UNKNOWN ERROR:", error);
-      }
-
-      throw error;
-    }
+  deleteAttendanceRecord: async (id: string) => {
+    return await axiosClient.delete(`/api/attendanceRecords/${id}`);
+  },
+  deteleAttendanceRecord: function (id: string) {
+    return this.deleteAttendanceRecord(id);
   },
 };
 

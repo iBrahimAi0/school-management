@@ -1,6 +1,6 @@
 import { axiosClient } from "../axios";
 import { isAxiosError } from "axios";
-import { ClassTypeValuesType } from "@/types/ClassTypeValuesType";
+import { ClassTypeValuesType } from "@/types/AdminTypes/ClassTypeValuesType";
 
 const ClassTypeApi = {
   addClassType: async (values: ClassTypeValuesType) => {
@@ -35,22 +35,11 @@ const ClassTypeApi = {
       throw error;
     }
   },
-  deteleClassType: async (id: string) => {
-    try {
-      return await axiosClient.delete(`/api/class-types/${id}`);
-    } catch (error: any) {
-      if (isAxiosError(error)) {
-        console.log("❌ STATUS:", error.response?.status);
-        console.log("❌ DATA:", error.response?.data);
-        console.log("❌ HEADERS:", error.response?.headers);
-        console.log("❌ REQUEST URL:", error.config?.url);
-        console.log("❌ METHOD:", error.config?.method);
-      } else {
-        console.log("❌ UNKNOWN ERROR:", error);
-      }
-
-      throw error;
-    }
+  deleteClassType: async (id: string) => {
+    return await axiosClient.delete(`/api/class-types/${id}`);
+  },
+  deteleClassType: function (id: string) {
+    return this.deleteClassType(id);
   },
 };
 

@@ -5,9 +5,9 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
 import { FieldDescription, FieldLegend } from "@/components/ui/field";
-import ClassesList from "@/components/ClasseComponents/ClassesList";
-import { ClasseForm } from "@/components/ClasseComponents/ClasseForm";
-import { ClasseValuesType } from "@/types/ClasseValuesType";
+import ClassesList from "@/components/AdminParts/ClasseComponents/ClassesList";
+import { ClasseForm } from "@/components/AdminParts/ClasseComponents/ClasseForm";
+import { ClasseValuesType } from "@/types/AdminTypes/ClasseValuesType";
 
 export default function ManageParents() {
   const [isActive, setIsActive] = useState(true);

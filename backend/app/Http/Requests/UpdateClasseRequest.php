@@ -29,8 +29,9 @@ class UpdateClasseRequest extends FormRequest
                 'min:3',
                 'max:50',
             ],
-            'code' => ['required', Rule::unique('class_types')->ignore($this->route('classType')), 'min:4', 'max:20'],
-            'class_type_id' => 'nullable'
+            'code' => ['required', Rule::unique('classes', 'code')->ignore($this->route('classe')), 'min:4', 'max:20'],
+            'class_type_id' => ['nullable', 'exists:class_types,id'],
+            'teacher_id' => ['nullable', 'exists:teachers,id'],
         ];
     }
 }

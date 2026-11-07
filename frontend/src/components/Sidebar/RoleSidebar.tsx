@@ -4,19 +4,16 @@ import * as React from "react";
 import {
   BookOpen,
   CalendarCheck,
+  CalendarCheck2,
   ClipboardList,
+  FileBadge,
   GraduationCap,
   LayoutDashboard,
-  BookCheck,
+  Presentation,
+  ShieldCheck,
   User,
-  UserGroup,
+  UserRoundGroup,
   Users,
-  BookOpenCheck,
-  CalendarClock,
-  School,
-  IdCardLanyard,
-  FingerprintPattern,
-  BookPlus,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -80,24 +77,29 @@ export function RoleSidebar({
           icon: LayoutDashboard,
         },
         {
-          title: "Assigned Classes",
-          url: "/teacher/dashboard",
+          title: "My Classes",
+          url: "/teacher/classes",
           icon: BookOpen,
         },
         {
+          title: "My Courses",
+          url: "/teacher/courses",
+          icon: Presentation,
+        },
+        {
           title: "Students",
-          url: "/teacher/dashboard",
-          icon: Users,
+          url: "/teacher/students",
+          icon: UserRoundGroup,
         },
         {
           title: "Attendance",
-          url: "/teacher/dashboard",
-          icon: CalendarCheck,
+          url: "/teacher/attendance",
+          icon: CalendarCheck2,
         },
         {
-          title: "Exams & Grading",
-          url: "/teacher/dashboard",
-          icon: ClipboardList,
+          title: "Exams & Grades",
+          url: "/teacher/grades",
+          icon: FileBadge,
         },
       ],
     },
@@ -110,7 +112,7 @@ export function RoleSidebar({
           url: "/parent/dashboard",
           icon: LayoutDashboard,
         },
-        /* {
+        {
           title: "Assigned Classes",
           url: "/parent/dashboard",
           icon: BookOpen,
@@ -129,7 +131,7 @@ export function RoleSidebar({
           title: "Exams & Grading",
           url: "/parent/dashboard",
           icon: ClipboardList,
-        }, */
+        },
       ],
     },
     admin: {
@@ -142,54 +144,65 @@ export function RoleSidebar({
           icon: LayoutDashboard,
         },
         {
-          title: "Parents",
-          url: "/admin/manage-parents",
-          icon: Users,
+          title: "Teachers",
+          url: "/admin/manage-teachers",
+          icon: GraduationCap,
         },
         {
           title: "Students",
           url: "/admin/manage-students",
-          icon: GraduationCap,
+          icon: Users,
         },
         {
-          title: "Teachers",
-          url: "/admin/manage-teachers",
-          icon: IdCardLanyard,
+          title: "Classes & Courses",
+          url: "#",
+          icon: BookOpen,
+          items: [
+            {
+              title: "Classes",
+              url: "/admin/manage-classes",
+            },
+            {
+              title: "Class Types",
+              url: "/admin/manage-class-types",
+            },
+            {
+              title: "Courses",
+              url: "/admin/manage-courses",
+            },
+            {
+              title: "Class by Year",
+              url: "/admin/manage-class-by-year",
+            },
+          ],
         },
         {
-          title: "Classes",
-          url: "/admin/manage-classes",
-          icon: School,
+          title: "Exams & Records",
+          url: "#",
+          icon: ClipboardList,
+          items: [
+            {
+              title: "Exams",
+              url: "/admin/manage-exams",
+            },
+            {
+              title: "Exam Records",
+              url: "/admin/manage-exam-records",
+            },
+            {
+              title: "Attendance Sessions",
+              url: "/admin/manage-attendance-sessions",
+            },
+            {
+              title: "Attendance Records",
+              url: "/admin/manage-attendance-records",
+            },
+          ],
         },
         {
-          title: "Class Types",
-          url: "/admin/manage-class-types",
-          icon: UserGroup,
-        },
-        {
-          title: "Courses",
-          url: "/admin/manage-courses",
-          icon: BookOpenCheck,
-        },
-        {
-          title: "Class by Year",
-          url: "/admin/manage-class-by-year ",
-          icon: CalendarClock,
-        },
-        {
-          title: "Exams",
-          url: "/admin/manage-exams",
-          icon: BookCheck,
-        },
-        {
-          title: "Exam Records",
-          url: "/admin/manage-exam-records",
-          icon: BookPlus,
-        },
-        {
-          title: "Attendance",
-          url: "/admin/manage-attendance",
-          icon: FingerprintPattern,
+          title: "User Directory",
+          url: "/admin/manage-parents",
+          icon: ShieldCheck,
         },
       ],
     },
@@ -210,7 +223,7 @@ export function RoleSidebar({
       <SidebarHeader className="border-b border-border/50 px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold text-xs">
-            {role[0].toUpperCase()}
+            {role ? role[0].toUpperCase() : "U"}
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
             <span className="truncate font-semibold">

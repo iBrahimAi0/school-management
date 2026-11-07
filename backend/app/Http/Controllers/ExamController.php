@@ -76,7 +76,7 @@ class ExamController extends Controller
     {
         $data = $request->validated();
         if ($request->hasFile('file_path')) {
-            if ($exam->file && Storage::disk('public')->exists($exam->file_path)) {
+            if ($exam->file_path && Storage::disk('public')->exists($exam->file_path)) {
                 Storage::disk('public')->delete($exam->file_path);
             }
 
@@ -105,6 +105,9 @@ class ExamController extends Controller
      */
     public function destroy(Exam $exam)
     {
+        if ($exam->file_path && Storage::disk('public')->exists($exam->file_path)) {
+            Storage::disk('public')->delete($exam->file_path);
+        }
         $exam->delete();
         return response()->json([
             'exam' => $exam,

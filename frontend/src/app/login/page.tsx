@@ -12,7 +12,16 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loader && user && role) {
-      router.replace(`/${role}/dashboard`);
+      const userRole = role.toLowerCase();
+      if (userRole === "admin") {
+        router.replace("/admin/dashboard");
+      } else if (userRole === "teacher") {
+        router.replace("/teacher/dashboard");
+      } else if (userRole === "parent") {
+        router.replace("/parent/dashboard");
+      } else if (userRole === "student") {
+        router.replace("/student/dashboard");
+      }
     }
   }, [user, role, loader, router]);
 

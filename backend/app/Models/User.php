@@ -11,7 +11,6 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory;
 
-    protected $guarded = [];
     protected $fillable = [
         'first_name',
         'last_name',
@@ -21,7 +20,8 @@ class User extends Authenticatable
         'blood_type',
         'email',
         'password',
-        'student_parent_id'
+        'student_parent_id',
+        'classe_id',
     ];
     protected $hidden = [
         'password',
@@ -35,8 +35,12 @@ class User extends Authenticatable
         'last_login_date' => 'datetime',
     ];
 
-    public function StudentParent()
+    public function studentParent()
     {
         return $this->belongsTo(StudentParent::class, 'student_parent_id');
+    }
+    public function classe()
+    {
+        return $this->belongsTo(Classe::class, 'classe_id');
     }
 }

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\User;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\StudentResource;
 
 class CourseController extends Controller
 {
@@ -20,15 +22,50 @@ class CourseController extends Controller
             'message' => 'Courses sent successfully'
         ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function teacherCourses($teacherId)
     {
-        //
-    }
+        $courses = Course::with([
+            'teachers:id,first_name,last_name'
+        ])
+            ->whereHas(
+                'teachers',
+                fn($query) =>
+                $query->where('teachers.id', $teacherId)
+            )
+            ->latest()
+            ->get();
 
+        return response()->json([
+            'teacherCourses' => CourseResource::collection($courses),
+            'message' => 'Teacher Courses sent successfully',
+        ]);
+    }
+    public function teacherCourseStudents($teacherId, $courseId)
+    {
+        // Retrieve students enrolled in classes taught by this teacher that have this course
+        $students = User::with(['classe:id,name,code', 'studentParent:id,first_name,last_name'])
+            ->whereHas('classe', function ($query) use ($teacherId, $courseId) {
+                $query->where('teacher_id', $teacherId)
+                    ->whereHas('classType.courses', function ($q) use ($courseId) {
+                        $q->where('courses.id', $courseId);
+                    });
+            })
+            ->get();
+
+        // Fallback: if class_type_courses mapping is not seeded, return students in this teacher's classes
+        if ($students->isEmpty()) {
+            $students = User::with(['classe:id,name,code', 'studentParent:id,first_name,last_name'])
+                ->whereHas('classe', function ($query) use ($teacherId) {
+                    $query->where('teacher_id', $teacherId);
+                })
+                ->get();
+        }
+
+        return response()->json([
+            'teacherCourseStudents' => StudentResource::collection($students),
+            'message' => 'Teacher Course Students sent successfully',
+        ]);
+    }
     /**
      * Store a newly created resource in storage.
      */

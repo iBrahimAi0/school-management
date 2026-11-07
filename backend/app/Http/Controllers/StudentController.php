@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\StudentResource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
@@ -21,6 +22,47 @@ class StudentController extends Controller
             'message' => 'Students List Sent Successfully'
         ]);
     }
+
+    public function teacherStudentsClasse($teacherId, $classeId)
+    {
+        $students = User::with(['classe:id,name,code', 'studentParent:id,first_name,last_name'])
+            ->where('classe_id', $classeId)
+            ->whereHas('classe', function ($query) use ($teacherId) {
+                $query->where('teacher_id', $teacherId);
+            })
+            ->get();
+
+        return response()->json([
+            'teacherStudentsClasse' => StudentResource::collection($students),
+            'message' => 'Teacher Students by Classe List has been sent successfully'
+        ]);
+    }
+
+    public function teacherStudents($teacherId)
+    {
+        $students = User::with(['classe:id,name,code', 'studentParent:id,first_name,last_name'])
+            ->whereHas('classe', function ($query) use ($teacherId) {
+                $query->where('teacher_id', $teacherId);
+            })
+            ->get();
+
+        return response()->json([
+            'teacherStudents' => StudentResource::collection($students),
+            'message' => 'Teacher Students List has been sent successfully'
+        ]);
+    }
+    /* public function StudentsRecord($classId)
+    {
+        $studentsByClasse = User::with(['classe:*'])->whereHas('classe', function ($query) use ($classId) {
+            $query->where('classe_id', $classId);
+        })->get();
+
+
+        return response()->json([
+            'studentsByClasse' => StudentResource::collection($studentsByClasse),
+            'message' => 'Student List has been sent successfully'
+        ]);
+    } */
 
 
     /**

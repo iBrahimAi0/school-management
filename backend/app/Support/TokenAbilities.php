@@ -18,16 +18,28 @@ class TokenAbilities
                 'students:read',
                 'students:update',
 
+                'classe:read',
                 'classes:read',
-                'subjects:read',
+                'course:read',
+                'courses:read',
+                'class-type:read',
+                'class-type-course:read',
 
-                'grades:read',
-                'grades:create',
-                'grades:update',
+                'exam:read',
+                'exam:create',
+                'exam:update',
 
-                'attendance:read',
-                'attendance:create',
-                'attendance:update',
+                'examRecord:read',
+                'examRecord:create',
+                'examRecord:update',
+
+                'attendanceSession:read',
+                'attendanceSession:create',
+                'attendanceSession:update',
+
+                'attendanceRecord:read',
+                'attendanceRecord:create',
+                'attendanceRecord:update',
 
                 'profile:read',
                 'profile:update',
@@ -39,11 +51,16 @@ class TokenAbilities
                 'profile:read',
                 'profile:update',
 
-                'grades:read',
-                'attendance:read',
-
+                'classe:read',
                 'classes:read',
-                'subjects:read',
+                'course:read',
+                'courses:read',
+
+                'exam:read',
+                'examRecord:read',
+
+                'attendanceSession:read',
+                'attendanceRecord:read',
             ],
 
             'parent' => [
@@ -54,11 +71,16 @@ class TokenAbilities
 
                 'students:read',
 
-                'grades:read',
-                'attendance:read',
-
+                'classe:read',
                 'classes:read',
-                'subjects:read',
+                'course:read',
+                'courses:read',
+
+                'exam:read',
+                'examRecord:read',
+
+                'attendanceSession:read',
+                'attendanceRecord:read',
             ],
 
             default => [],

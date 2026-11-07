@@ -5,12 +5,12 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
 import { FieldDescription, FieldLegend } from "@/components/ui/field";
-import ExamRecordsList from "@/components/ExamRecordComponents/ExamRecordsList";
-import { ExamRecordForm } from "@/components/ExamRecordComponents/ExamRecordForm";
+import ExamRecordsList from "@/components/AdminParts/ExamRecordComponents/ExamRecordsList";
+import { ExamRecordForm } from "@/components/AdminParts/ExamRecordComponents/ExamRecordForm";
 import {
   ExamRecordFormValuesType,
   ExamRecordType,
-} from "@/types/ExamRecordValuesType";
+} from "@/types/AdminTypes/ExamRecordValuesType";
 
 export default function ManageExamRecords() {
   const [isActive, setIsActive] = useState(true);

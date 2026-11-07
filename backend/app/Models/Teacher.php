@@ -32,4 +32,8 @@ class Teacher extends Authenticatable
     protected $casts = [
         'date_of_birth' => 'date',
     ];
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class);
+    }
 }

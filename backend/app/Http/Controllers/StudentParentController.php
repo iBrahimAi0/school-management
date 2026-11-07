@@ -9,8 +9,6 @@ use App\Models\StudentParent;
 use DateTime;
 use Illuminate\Support\Facades\Hash;
 
-use function Pest\Laravel\json;
-
 class StudentParentController extends Controller
 {
     /**

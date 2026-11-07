@@ -91,7 +91,9 @@ export default function AdminDashboard() {
         </h3>
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="outline">
-            <Link href="/users" className="flex items-center gap-2">
+            <Link
+              href="/admin/manage-parents"
+              className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4" />
               <span>User Directory</span>
             </Link>

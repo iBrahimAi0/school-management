@@ -16,7 +16,14 @@ class AttendanceRecordResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'attendance_session' => $this->whenLoaded('attendance_session'),
+            'attendance_session' => $this->whenLoaded(
+                'attendanceSession',
+                fn() => [
+                    'id' => $this->attendanceSession->id,
+                    'date' => $this->attendanceSession->date,
+                    'course' => $this->attendanceSession->course?->name,
+                ]
+            ),
             'student' => $this->whenLoaded('student'),
             'status' => $this->status,
             'updated_at' => $this->updated_at?->toISOString(),

@@ -6,6 +6,7 @@ use App\Models\Classe;
 use App\Http\Requests\StoreClasseRequest;
 use App\Http\Requests\UpdateClasseRequest;
 use App\Http\Resources\ClasseResource;
+use Illuminate\Support\Facades\DB;
 
 class ClasseController extends Controller
 {
@@ -14,12 +15,28 @@ class ClasseController extends Controller
      */
     public function index()
     {
-        $classes = Classe::with(['classType:id,name'])->latest()->get();
+        $classes = Classe::with(['classType:id,name', 'teacher:id,first_name,last_name'])->latest()->get();
         return response()->json([
             'classes' => ClasseResource::collection($classes),
             'message' => 'Classes List has been sent successfully'
         ]);
     }
+
+
+
+    public function teacherClasses($teacherId)
+    {
+        $teacherClasses = Classe::with(['classType:id,name'])
+            ->where('teacher_id', $teacherId)
+            ->get();
+        return response()->json([
+            'teacherClasses' => ClasseResource::collection($teacherClasses),
+            'message' => 'Teacher classes List has been sent successfully'
+        ]);
+    }
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -71,7 +88,7 @@ class ClasseController extends Controller
 
 
         $classe->update($request->validated());
-        $classe->load(['classType:id,name']);
+        $classe->load(['classType:id,name', 'teacher:id,first_name,last_name']);
         return response()->json([
             'classe' => $classe->refresh(),
             'message' => 'Classe Updated Successfuly'

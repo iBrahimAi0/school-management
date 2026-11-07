@@ -19,6 +19,8 @@ class ClasseResource extends JsonResource
             'name' => $this->name,
             'code' => $this->code,
             'class_type' => $this->whenLoaded('classType'),
+            'teacher_id' => $this->teacher_id,
+            'teacher' => $this->whenLoaded('teacher'),
             'updated_at' => $this->updated_at?->toISOString(),
 
         ];

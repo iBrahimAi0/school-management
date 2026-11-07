@@ -1,6 +1,6 @@
 import { axiosClient } from "../axios";
 import { isAxiosError } from "axios";
-import { ExamRecordType } from "@/types/ExamRecordValuesType";
+import { ExamRecordType } from "@/types/AdminTypes/ExamRecordValuesType";
 
 const ExamRecordApi = {
   addExamRecord: async (values: ExamRecordType) => {
@@ -35,22 +35,11 @@ const ExamRecordApi = {
       throw error;
     }
   },
-  deteleExamRecord: async (id: string) => {
-    try {
-      return await axiosClient.delete(`/api/examRecords/${id}`);
-    } catch (error: any) {
-      if (isAxiosError(error)) {
-        console.log("❌ STATUS:", error.response?.status);
-        console.log("❌ DATA:", error.response?.data);
-        console.log("❌ HEADERS:", error.response?.headers);
-        console.log("❌ REQUEST URL:", error.config?.url);
-        console.log("❌ METHOD:", error.config?.method);
-      } else {
-        console.log("❌ UNKNOWN ERROR:", error);
-      }
-
-      throw error;
-    }
+  deleteExamRecord: async (id: string) => {
+    return await axiosClient.delete(`/api/examRecords/${id}`);
+  },
+  deteleExamRecord: function (id: string) {
+    return this.deleteExamRecord(id);
   },
 };
 

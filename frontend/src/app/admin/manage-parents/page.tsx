@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 
-import ParentsList from "@/components/ParentComponents/ParentsList";
-import { ParentsForm } from "@/components/ParentComponents/ParentsForm";
+import ParentsList from "@/components/AdminParts/ParentComponents/ParentsList";
+import { ParentsForm } from "@/components/AdminParts/ParentComponents/ParentsForm";
 import { useUserContext } from "@/context/UserProvider";
-import { ParentValuesType } from "@/types/ParetnValuesType";
+import { ParentValuesType } from "@/types/AdminTypes/ParentValuesType";
 import { FieldDescription, FieldLegend } from "@/components/ui/field";
 
 export default function ManageParents() {

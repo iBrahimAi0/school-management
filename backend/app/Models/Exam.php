@@ -32,4 +32,9 @@ class Exam extends Model
     {
         return $this->belongsTo(Teacher::class, 'teacher_id');
     }
+
+    public function examRecords()
+    {
+        return $this->hasMany(ExamRecord::class);
+    }
 }

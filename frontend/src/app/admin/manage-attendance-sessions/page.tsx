@@ -5,39 +5,43 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
 import { FieldDescription, FieldLegend } from "@/components/ui/field";
-import TeachersList from "@/components/TeacherComponents/TeachersList";
-import { TeachersForm } from "@/components/TeacherComponents/TeachersForm";
-import { TeacherValuesType } from "@/types/TeacherValuesType";
+import { AttendanceSession } from "@/types/AdminTypes/AttendanceSessionValuesType";
+import { AttendanceSessionForm } from "@/components/AdminParts/AttendanceSessionComponents/AttendanceSessionForm";
+import AttendanceSessionsList from "@/components/AdminParts/AttendanceSessionComponents/AttendanceSessionsList";
 
-export default function ManageParents() {
+export default function ManageAttendanceSessions() {
   const [isActive, setIsActive] = useState(true);
-  const { addTeacher } = useUserContext();
+  const { addAttendanceSession } = useUserContext();
   return (
     <>
       <ButtonGroup className="">
         <Button
           variant={`${isActive ? "default" : "outline"}`}
           onClick={() => setIsActive(true)}>
-          Teachers
+          Attendance Sessions
         </Button>
         <Button
           variant={`${!isActive ? "default" : "outline"}`}
           onClick={() => setIsActive(false)}>
-          Add new teacher
+          Add new Attendance Session
         </Button>
       </ButtonGroup>
 
       <div className="my-10 ">
         {isActive ? (
-          <TeachersList />
+          <AttendanceSessionsList />
         ) : (
           <div className="border p-5 rounded-xl flex flex-col gap-5">
             <div>
-              <FieldLegend>Create Teacher</FieldLegend>
-              <FieldDescription>Here you can create a teacher</FieldDescription>
+              <FieldLegend>Create Attendance Session</FieldLegend>
+              <FieldDescription>
+                Here you can create a Attendance Session
+              </FieldDescription>
             </div>
-            <TeachersForm
-              handleSubmit={(values: TeacherValuesType) => addTeacher(values)}
+            <AttendanceSessionForm
+              handleSubmit={(values: AttendanceSession) =>
+                addAttendanceSession(values)
+              }
               mode={"create"}
             />
           </div>
