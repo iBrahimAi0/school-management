@@ -231,13 +231,13 @@ function TeacherClassesStudentsContent() {
             {classeName} &bull; Class Roster
           </h1>
           <p className="text-sm text-muted-foreground">
-            Enrolled students currently registered under this classroom.
+            Students currently registered under this classroom.
           </p>
         </div>
 
         <Badge variant="secondary" className="px-3 py-1.5 text-xs w-fit">
           <Users className="h-3.5 w-3.5 mr-1.5" />
-          Enrolled: {students.length} Students
+          Roster: {students.length} Students
         </Badge>
       </div>
 
@@ -251,7 +251,7 @@ function TeacherClassesStudentsContent() {
           <CardHeader>
             <CardTitle>No students found</CardTitle>
             <CardDescription>
-              There are no students currently enrolled in this class.
+              There are no students currently registered in this class.
             </CardDescription>
           </CardHeader>
         </Card>

@@ -50,7 +50,7 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">450</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Enrolled across all grades
+              Registered across all classes
             </p>
           </CardContent>
         </Card>

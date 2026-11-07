@@ -208,7 +208,7 @@ export default function TeacherStudents() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">My Students</h1>
           <p className="text-sm text-muted-foreground">
-            Complete directory of all students currently enrolled in your classes.
+            Complete directory of all students currently registered in your classes.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -228,7 +228,7 @@ export default function TeacherStudents() {
           <CardHeader>
             <CardTitle>No students found</CardTitle>
             <CardDescription>
-              No students are currently enrolled in your classes.
+              No students are currently registered in your classes.
             </CardDescription>
           </CardHeader>
         </Card>

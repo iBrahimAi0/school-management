@@ -379,7 +379,7 @@ export default function TeacherAttendanceStudents({
           <CardHeader>
             <CardTitle>No students found</CardTitle>
             <CardDescription>
-              There are no students enrolled in this course or class.
+              There are no students assigned to this course or class.
             </CardDescription>
           </CardHeader>
         </Card>

@@ -9,8 +9,10 @@ use App\Http\Controllers\ClassTypeCourseController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamRecordController;
+use App\Http\Controllers\ParentPortalController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentParentController;
+use App\Http\Controllers\StudentPortalController;
 use App\Http\Controllers\TeacherController;
 use App\Models\AttendanceRecord;
 use App\Models\AttendanceSession;
@@ -50,7 +52,7 @@ Route::middleware(['auth:sanctum', 'abilities:dashboard:view'])
         });
     });
 
-// Teacher Route Group
+// Parent Route Group
 Route::middleware(['auth:sanctum', 'abilities:dashboard:view'])
     ->prefix('parent')
     ->group(function () {
@@ -59,6 +61,7 @@ Route::middleware(['auth:sanctum', 'abilities:dashboard:view'])
                 'data' => 'Parent View',
             ]);
         });
+        Route::get('/portal-data', [ParentPortalController::class, 'getPortalData']);
     });
 
 // Student Route Group
@@ -70,6 +73,7 @@ Route::middleware(['auth:sanctum', 'abilities:dashboard:view'])
                 'data' => 'Student Grades',
             ]);
         });
+        Route::get('/portal-data', [StudentPortalController::class, 'getPortalData']);
     });
 
 Route::middleware('auth:sanctum')->group(function () {

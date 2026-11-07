@@ -41,6 +41,9 @@ const ParentApi = {
   deteleParent: function (id: string) {
     return this.deleteParent(id);
   },
+  getPortalData: async () => {
+    return await axiosClient.get("/api/parent/portal-data");
+  },
 };
 
 export default ParentApi;

@@ -35,6 +35,13 @@ class User extends Authenticatable
         'last_login_date' => 'datetime',
     ];
 
+    protected $appends = ['name'];
+
+    public function getNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}");
+    }
+
     public function studentParent()
     {
         return $this->belongsTo(StudentParent::class, 'student_parent_id');

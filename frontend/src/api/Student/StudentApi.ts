@@ -84,4 +84,7 @@ export const StudentApi = {
       throw error;
     }
   },
+  getPortalData: async () => {
+    return await axiosClient.get("/api/student/portal-data");
+  },
 };

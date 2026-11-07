@@ -50,7 +50,7 @@ class ExamRecordController extends Controller
             ],
             [
                 'note' => $data['note'],
-                'comment' => $data['comment'] ?? null,
+                'comment' => !empty($data['comment']) ? $data['comment'] : null,
             ]
         );
         $createdExamRecord->load(['student:id,first_name,last_name', 'exam:id,name']);
@@ -83,6 +83,9 @@ class ExamRecordController extends Controller
     public function update(UpdateExamRecordRequest $request, ExamRecord $examRecord)
     {
         $data = $request->validated();
+        if (array_key_exists('comment', $data) && empty($data['comment'])) {
+            $data['comment'] = null;
+        }
         $examRecord->update($data);
         $examRecord->load([
             'student:id,first_name,last_name',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Classe;
 use App\Models\User;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
@@ -35,6 +36,17 @@ class CourseController extends Controller
             ->latest()
             ->get();
 
+        if ($courses->isEmpty()) {
+            $classTypeIds = Classe::where('teacher_id', $teacherId)->pluck('class_type_id');
+            if ($classTypeIds->isNotEmpty()) {
+                $courses = Course::whereHas('classTypes', fn($q) => $q->whereIn('class_types.id', $classTypeIds))->latest()->get();
+            }
+        }
+
+        if ($courses->isEmpty()) {
+            $courses = Course::latest()->get();
+        }
+
         return response()->json([
             'teacherCourses' => CourseResource::collection($courses),
             'message' => 'Teacher Courses sent successfully',
@@ -42,7 +54,7 @@ class CourseController extends Controller
     }
     public function teacherCourseStudents($teacherId, $courseId)
     {
-        // Retrieve students enrolled in classes taught by this teacher that have this course
+        // Retrieve students registered in classes taught by this teacher that have this course
         $students = User::with(['classe:id,name,code', 'studentParent:id,first_name,last_name'])
             ->whereHas('classe', function ($query) use ($teacherId, $courseId) {
                 $query->where('teacher_id', $teacherId)

@@ -252,7 +252,7 @@ function TeacherCoursesStudentsContent() {
             </Link>
           </Button>
           <h1 className="text-2xl font-bold tracking-tight">
-            {courseName} &bull; Enrolled Students
+            {courseName} &bull; Course Students
           </h1>
           <p className="text-sm text-muted-foreground">
             Students actively registered in classes taking this course.
@@ -261,7 +261,7 @@ function TeacherCoursesStudentsContent() {
 
         <Badge variant="secondary" className="px-3 py-1.5 text-xs w-fit">
           <Users className="h-3.5 w-3.5 mr-1.5" />
-          Enrolled: {students.length} Students
+          Active: {students.length} Students
         </Badge>
       </div>
 
@@ -275,7 +275,7 @@ function TeacherCoursesStudentsContent() {
           <CardHeader>
             <CardTitle>No students found</CardTitle>
             <CardDescription>
-              There are no students currently enrolled in this course.
+              There are no students currently assigned to this course.
             </CardDescription>
           </CardHeader>
         </Card>

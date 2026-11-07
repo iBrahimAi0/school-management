@@ -45,7 +45,7 @@ export function TeacherCourses() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">My Courses</h1>
         <p className="text-sm text-muted-foreground">
-          Explore course curricula, syllabus details, and enrolled students.
+          Explore course curricula, syllabus details, and active students.
         </p>
       </div>
 

@@ -373,7 +373,7 @@ function TeacherGradesStudentsContent() {
           <CardHeader>
             <CardTitle>No students found</CardTitle>
             <CardDescription>
-              There are no students currently enrolled in this course or class.
+              There are no students currently assigned to this course or class.
             </CardDescription>
           </CardHeader>
         </Card>

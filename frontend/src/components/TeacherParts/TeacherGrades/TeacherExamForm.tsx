@@ -44,12 +44,42 @@ export function TeacherExamForm({ onSuccess, onCancel }: TeacherExamFormProps) {
     const fetchTeacherOptions = async () => {
       try {
         setLoadingOptions(true);
-        const [classesRes, coursesRes] = await Promise.all([
+        const [classesRes, coursesRes] = await Promise.allSettled([
           ClasseApi.getTeacherClasses(user.id),
           CourseApi.getTeacherCourses(user.id),
         ]);
-        setClasses(classesRes.data?.teacherClasses ?? []);
-        setCourses(coursesRes.data?.teacherCourses ?? []);
+
+        let fetchedClasses =
+          classesRes.status === "fulfilled"
+            ? classesRes.value.data?.teacherClasses ?? []
+            : [];
+        let fetchedCourses =
+          coursesRes.status === "fulfilled"
+            ? coursesRes.value.data?.teacherCourses ?? []
+            : [];
+
+        // Fallback: If no assigned classes, get all classes
+        if (!fetchedClasses.length) {
+          try {
+            const allCls = await ClasseApi.getClasse();
+            fetchedClasses = allCls.data?.classes ?? [];
+          } catch (e) {
+            console.error("Classes fallback failed:", e);
+          }
+        }
+
+        // Fallback: If no assigned courses, get all courses
+        if (!fetchedCourses.length) {
+          try {
+            const allCrs = await CourseApi.getCourses();
+            fetchedCourses = allCrs.data?.courses ?? [];
+          } catch (e) {
+            console.error("Courses fallback failed:", e);
+          }
+        }
+
+        setClasses(fetchedClasses);
+        setCourses(fetchedCourses);
       } catch (error) {
         console.error("Failed to load teacher classes/courses:", error);
       } finally {

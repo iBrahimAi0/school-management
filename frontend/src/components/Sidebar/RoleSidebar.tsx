@@ -52,17 +52,17 @@ export function RoleSidebar({
         },
         {
           title: "My Courses",
-          url: "/student/dashboard",
+          url: "/student/courses",
           icon: BookOpen,
         },
         {
           title: "Grades & Exams",
-          url: "/student/dashboard",
+          url: "/student/grades",
           icon: GraduationCap,
         },
         {
           title: "Attendance",
-          url: "/student/dashboard",
+          url: "/student/attendance",
           icon: CalendarCheck,
         },
       ],
@@ -113,23 +113,18 @@ export function RoleSidebar({
           icon: LayoutDashboard,
         },
         {
-          title: "Assigned Classes",
-          url: "/parent/dashboard",
-          icon: BookOpen,
-        },
-        {
-          title: "Students",
-          url: "/parent/dashboard",
+          title: "My Children",
+          url: "/parent/children",
           icon: Users,
         },
         {
           title: "Attendance",
-          url: "/parent/dashboard",
+          url: "/parent/attendance",
           icon: CalendarCheck,
         },
         {
           title: "Exams & Grading",
-          url: "/parent/dashboard",
+          url: "/parent/grades",
           icon: ClipboardList,
         },
       ],
