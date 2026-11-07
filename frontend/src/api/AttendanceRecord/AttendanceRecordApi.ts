@@ -13,7 +13,7 @@ const AttendanceRecordApi = {
     }
   },
   updateAttendanceRecord: async (
-    id: string,
+    id: string | number,
     values: AttendanceRecordFormValues,
   ) => {
     try {
@@ -31,17 +31,18 @@ const AttendanceRecordApi = {
       throw error;
     }
   },
-  getAttendanceRecords: async () => {
+  getAttendanceRecords: async (sessionId?: number | string) => {
     try {
-      return await axiosClient.get("/api/attendanceRecords");
+      const params = sessionId ? { session_id: sessionId } : {};
+      return await axiosClient.get("/api/attendanceRecords", { params });
     } catch (error: any) {
       throw error;
     }
   },
-  deleteAttendanceRecord: async (id: string) => {
+  deleteAttendanceRecord: async (id: string | number) => {
     return await axiosClient.delete(`/api/attendanceRecords/${id}`);
   },
-  deteleAttendanceRecord: function (id: string) {
+  deteleAttendanceRecord: function (id: string | number) {
     return this.deleteAttendanceRecord(id);
   },
 };

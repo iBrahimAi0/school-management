@@ -13,17 +13,22 @@ class AttendanceRecordController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $attendanceRecords = AttendanceRecord::with([
+        $query = AttendanceRecord::with([
             'student',
             'attendanceSession.course',
-        ])->get();
+        ]);
+
+        if ($request->filled('session_id')) {
+            $query->where('attendance_session_id', $request->query('session_id'));
+        }
+
+        $attendanceRecords = $query->get();
 
         return response()->json([
             'attendanceRecords' => AttendanceRecordResource::collection($attendanceRecords),
             'message' => 'Attendance Record List sent successfully'
-
         ]);
     }
 
@@ -41,10 +46,19 @@ class AttendanceRecordController extends Controller
     public function store(StoreAttendanceRecordRequest $request)
     {
         $data = $request->validated();
-        $attendanceRecord = new AttendanceRecordResource(AttendanceRecord::create($data));
+        $attendanceRecord = AttendanceRecord::updateOrCreate(
+            [
+                'attendance_session_id' => $data['attendance_session_id'],
+                'user_id' => $data['user_id'],
+            ],
+            [
+                'status' => $data['status'],
+            ]
+        );
+        $attendanceRecord->load(['student', 'attendanceSession.course']);
         return response()->json([
-            'attendanceRecord' => $attendanceRecord,
-            'message' => 'Attendance Record created successfully'
+            'attendanceRecord' => new AttendanceRecordResource($attendanceRecord),
+            'message' => 'Attendance Record saved successfully'
         ]);
     }
 

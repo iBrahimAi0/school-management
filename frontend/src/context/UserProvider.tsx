@@ -90,7 +90,7 @@ interface UserStateContextType {
     attendanceSessionValues: AttendanceSessionFormValues,
   ) => Promise<any>;
   updateAttendanceRecord: (
-    id: string,
+    id: string | number,
     attendanceRecordValues: AttendanceRecordFormValues,
   ) => Promise<any>;
   addAttendanceRecord: (
@@ -469,7 +469,7 @@ export const UserProvider = ({
     }
   };
   const updateAttendanceRecord = async (
-    id: string,
+    id: string | number,
     values: AttendanceRecordFormValues,
   ) => {
     try {
