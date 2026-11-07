@@ -1,9 +1,12 @@
 import { axiosClient } from "../axios";
 import { isAxiosError } from "axios";
-import { ExamRecordType } from "@/types/AdminTypes/ExamRecordValuesType";
+import {
+  ExamRecordFormValuesType,
+  ExamRecordType,
+} from "@/types/AdminTypes/ExamRecordValuesType";
 
 const ExamRecordApi = {
-  addExamRecord: async (values: ExamRecordType) => {
+  addExamRecord: async (values: ExamRecordType | ExamRecordFormValuesType) => {
     try {
       return await axiosClient.post("/api/examRecords", values);
     } catch (error: any) {
@@ -12,7 +15,10 @@ const ExamRecordApi = {
       throw error;
     }
   },
-  updateExamRecord: async (id: string, values: ExamRecordType) => {
+  updateExamRecord: async (
+    id: string | number,
+    values: ExamRecordType | ExamRecordFormValuesType,
+  ) => {
     try {
       return await axiosClient.put(`/api/examRecords/${id}`, values);
     } catch (error: any) {
@@ -28,17 +34,18 @@ const ExamRecordApi = {
       throw error;
     }
   },
-  getExamRecords: async () => {
+  getExamRecords: async (examId?: number | string) => {
     try {
-      return await axiosClient.get("/api/examRecords");
+      const params = examId ? { exam_id: examId } : {};
+      return await axiosClient.get("/api/examRecords", { params });
     } catch (error: any) {
       throw error;
     }
   },
-  deleteExamRecord: async (id: string) => {
+  deleteExamRecord: async (id: string | number) => {
     return await axiosClient.delete(`/api/examRecords/${id}`);
   },
-  deteleExamRecord: function (id: string) {
+  deteleExamRecord: function (id: string | number) {
     return this.deleteExamRecord(id);
   },
 };

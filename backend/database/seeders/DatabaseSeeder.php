@@ -40,6 +40,26 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
             "password" => Hash::make('admin123456')
         ]);
+        StudentParent::factory()->create([
+            'first_name' => 'Parent',
+            'last_name' => 'Parent',
+            'date_of_birth' => fake()->date(),
+            'address' => fake()->address(),
+            'phone' => substr(fake()->phoneNumber(), 10),
+            'blood_type' => 'B-',
+            'email' => 'parent@example.com',
+            "password" => Hash::make('parent123456')
+        ]);
+        User::factory()->create([
+            'first_name' => 'Student',
+            'last_name' => 'Student',
+            'date_of_birth' => fake()->date(),
+            'student_parent_id' => 1,
+            'classe_id' => 1,
+            'blood_type' => 'B-',
+            'email' => 'student@example.com',
+            "password" => Hash::make('student123456')
+        ]);
         Teacher::factory()->create([
             'first_name' => 'Teacher',
             'last_name' => 'Teacher',

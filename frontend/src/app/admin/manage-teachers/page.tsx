@@ -4,12 +4,18 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import TeachersList from "@/components/AdminParts/TeacherComponents/TeachersList";
 import { TeachersForm } from "@/components/AdminParts/TeacherComponents/TeachersForm";
 import { TeacherValuesType } from "@/types/AdminTypes/TeacherValuesType";
 
-export default function ManageParents() {
+export default function ManageTeachers() {
   const [isActive, setIsActive] = useState(true);
   const { addTeacher } = useUserContext();
   return (
@@ -27,20 +33,24 @@ export default function ManageParents() {
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <TeachersList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Teacher</FieldLegend>
-              <FieldDescription>Here you can create a teacher</FieldDescription>
-            </div>
-            <TeachersForm
-              handleSubmit={(values: TeacherValuesType) => addTeacher(values)}
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Create Teacher</CardTitle>
+              <CardDescription>
+                Register a new teacher faculty member into the system.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TeachersForm
+                handleSubmit={(values: TeacherValuesType) => addTeacher(values)}
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>

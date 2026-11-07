@@ -3,7 +3,13 @@ import { axiosClient } from "../axios";
 import { ExamFormValuesType, ExamType } from "@/types/AdminTypes/ExamValuesType";
 
 const ExamApi = {
-  getExams: () => axiosClient.get("/api/exams"),
+  getExams: (teacherId?: number | string) =>
+    axiosClient.get("/api/exams", {
+      params: teacherId ? { teacher_id: teacherId } : {},
+    }),
+
+  getTeacherExams: (teacherId: number | string | undefined) =>
+    axiosClient.get(`/api/teachers/${teacherId}/exams`),
 
   // CREATE (Sends FormData as POST)
   addExam: (values: ExamFormValuesType | ExamType) => {

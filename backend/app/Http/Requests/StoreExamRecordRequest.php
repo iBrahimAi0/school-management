@@ -45,8 +45,7 @@ class StoreExamRecordRequest extends FormRequest
             'comment' => [
                 'nullable',
                 'string',
-                'min:5',
-                'max:100',
+                'max:255',
             ],
         ];
     }

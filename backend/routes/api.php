@@ -215,6 +215,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/exams', [ExamController::class, 'index'])
         ->middleware('abilities:exam:read');
+    Route::get('/teachers/{teacherId}/exams', [ExamController::class, 'teacherExams'])
+        ->middleware('abilities:exam:read');
+    Route::get('/teacher/{teacherId}/exams', [ExamController::class, 'teacherExams'])
+        ->middleware('abilities:exam:read');
     Route::get('/exams/{id}/file', [ExamController::class, 'showFile'])
         ->middleware('abilities:exam:read');
     Route::post('/exams', [ExamController::class, 'store'])

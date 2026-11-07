@@ -4,12 +4,18 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import ClassesList from "@/components/AdminParts/ClasseComponents/ClassesList";
 import { ClasseForm } from "@/components/AdminParts/ClasseComponents/ClasseForm";
 import { ClasseValuesType } from "@/types/AdminTypes/ClasseValuesType";
 
-export default function ManageParents() {
+export default function ManageClasses() {
   const [isActive, setIsActive] = useState(true);
   const { addClasse } = useUserContext();
   return (
@@ -27,20 +33,24 @@ export default function ManageParents() {
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <ClassesList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Classe</FieldLegend>
-              <FieldDescription>Here you can create a classe</FieldDescription>
-            </div>
-            <ClasseForm
-              handleSubmit={(values: ClasseValuesType) => addClasse(values)}
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Create Class</CardTitle>
+              <CardDescription>
+                Configure a new class section and assign faculty.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ClasseForm
+                handleSubmit={(values: ClasseValuesType) => addClasse(values)}
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>

@@ -17,12 +17,13 @@ class ExamRecordResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'exam_id' => $this->exam_id,
+            'user_id' => $this->user_id,
             'exam' => $this->whenLoaded('exam'),
             'student' => $this->whenLoaded('student'),
             'note'  => $this->note,
             'comment' => $this->comment,
             'updated_at' => $this->updated_at?->toISOString(),
-
         ];
     }
 }

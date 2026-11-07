@@ -1,4 +1,5 @@
 "use client";
+
 import { useUserContext } from "@/context/UserProvider";
 import {
   BookOpen,
@@ -6,9 +7,17 @@ import {
   ShieldAlert,
   Users,
   Layers,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function AdminDashboard() {
   const { user } = useUserContext();
@@ -21,97 +30,114 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">
+        <h1 className="text-2xl font-bold tracking-tight">
           Hi, {adminName} 👋
-        </h2>
+        </h1>
         <p className="text-muted-foreground text-sm">
           Welcome to the School Administration Control Panel.
         </p>
       </div>
 
-      {/* Admin Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-muted-foreground">
+      {/* Admin Stats Grid with Shadcn Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Students
-            </h3>
-            <Users className="h-5 w-5 text-blue-600" />
-          </div>
-          <p className="text-3xl font-bold mt-2 text-blue-600">450</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Enrolled across all grades
-          </p>
-        </div>
+            </CardTitle>
+            <Users className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">450</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Enrolled across all grades
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-muted-foreground">
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Teachers
-            </h3>
-            <GraduationCap className="h-5 w-5 text-purple-600" />
-          </div>
-          <p className="text-3xl font-bold mt-2 text-purple-600">32</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Full-time faculty
-          </p>
-        </div>
+            </CardTitle>
+            <GraduationCap className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">32</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Full-time faculty
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-muted-foreground">
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Classes & Sections
-            </h3>
-            <Layers className="h-5 w-5 text-emerald-600" />
-          </div>
-          <p className="text-3xl font-bold mt-2 text-emerald-600">18</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Active class sections
-          </p>
-        </div>
+            </CardTitle>
+            <Layers className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">18</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Active class sections
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-muted-foreground">
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Courses
-            </h3>
-            <BookOpen className="h-5 w-5 text-amber-600" />
-          </div>
-          <p className="text-3xl font-bold mt-2 text-amber-600">24</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Curriculum subjects
-          </p>
-        </div>
+            </CardTitle>
+            <BookOpen className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">24</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Curriculum subjects
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Quick Administrative Links */}
-      <div className="rounded-xl border bg-card p-6 shadow-sm">
-        <h3 className="font-semibold text-lg mb-4">
-          Quick Administrative Actions
-        </h3>
-        <div className="flex flex-wrap gap-3">
-          <Button asChild variant="outline">
-            <Link
-              href="/admin/manage-parents"
-              className="flex items-center gap-2">
-              <ShieldAlert className="h-4 w-4" />
-              <span>User Directory</span>
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/student/dashboard" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span>Preview Student View</span>
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/teacher/dashboard" className="flex items-center gap-2">
-              <GraduationCap className="h-4 w-4" />
-              <span>Preview Teacher View</span>
-            </Link>
-          </Button>
-        </div>
-      </div>
+      {/* Quick Administrative Links with Shadcn Card */}
+      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle>Quick Administrative Actions</CardTitle>
+          <CardDescription>
+            Frequently accessed administrative management portals.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            <Button asChild variant="outline">
+              <Link href="/admin/manage-teachers" className="flex items-center gap-2">
+                <GraduationCap className="h-4 w-4" />
+                <span>Teachers Directory</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/manage-students" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span>Students Directory</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/manage-classes" className="flex items-center gap-2">
+                <Layers className="h-4 w-4" />
+                <span>Manage Classes</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/manage-courses" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                <span>Manage Courses</span>
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

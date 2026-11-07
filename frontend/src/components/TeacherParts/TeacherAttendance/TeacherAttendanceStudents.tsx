@@ -1,10 +1,28 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { ArrowLeft, Plus, Pencil, CheckCircle2, Clock, XCircle, HelpCircle } from "lucide-react";
+import { createColumnHelper } from "@tanstack/react-table";
+import {
+  ArrowLeft,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Plus,
+  Pencil,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  HelpCircle,
+  Mail,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { SpinnerSize } from "@/components/Spinners/Spiner";
 import { TeacherSessionsType } from "@/types/TeacherTypes/TeacherSessionsType";
 import { StudentTypes } from "@/types/AdminTypes/StudentValuesType";
@@ -14,6 +32,8 @@ import { StudentApi } from "@/api/Student/StudentApi";
 import AttendanceRecordApi from "@/api/AttendanceRecord/AttendanceRecordApi";
 import { useUserContext } from "@/context/UserProvider";
 import { AttendanceModal } from "./AttendanceModal";
+import { DataTable } from "@/components/DataTable/DataTable";
+import { DataTableFeatures } from "@/components/DataTable/data-table-features";
 
 interface TeacherAttendanceStudentsProps {
   session: TeacherSessionsType;
@@ -48,7 +68,6 @@ export default function TeacherAttendanceStudents({
     try {
       setLoading(true);
 
-      // Fetch students for the course (or class)
       let studentList: StudentTypes[] = [];
       if (session.course?.id) {
         const courseRes = await CourseApi.getTeacherCourseStudents(
@@ -67,8 +86,6 @@ export default function TeacherAttendanceStudents({
       }
 
       setStudents(studentList);
-
-      // Fetch attendance records for this session
       await fetchRecords();
     } catch (error) {
       console.error("Failed to load attendance session data:", error);
@@ -81,7 +98,6 @@ export default function TeacherAttendanceStudents({
     loadData();
   }, [user?.id, session.id]);
 
-  // Map student ID to their attendance record
   const recordMap = useMemo(() => {
     const map = new Map<number, AttendanceRecord>();
     records.forEach((rec) => {
@@ -93,7 +109,6 @@ export default function TeacherAttendanceStudents({
     return map;
   }, [records]);
 
-  // Statistics
   const stats = useMemo(() => {
     let present = 0;
     let late = 0;
@@ -105,12 +120,11 @@ export default function TeacherAttendanceStudents({
     });
     return {
       total: students.length,
-      marked: records.length,
       present,
       late,
       absent,
     };
-  }, [students.length, records]);
+  }, [students, records]);
 
   const handleOpenAddModal = (student: StudentTypes) => {
     setSelectedStudent(student);
@@ -118,7 +132,10 @@ export default function TeacherAttendanceStudents({
     setModalOpen(true);
   };
 
-  const handleOpenEditModal = (student: StudentTypes, record: AttendanceRecord) => {
+  const handleOpenEditModal = (
+    student: StudentTypes,
+    record: AttendanceRecord
+  ) => {
     setSelectedStudent(student);
     setSelectedRecord(record);
     setModalOpen(true);
@@ -127,7 +144,7 @@ export default function TeacherAttendanceStudents({
   const renderStatusBadge = (record?: AttendanceRecord) => {
     if (!record) {
       return (
-        <Badge variant="outline" className="text-muted-foreground border-dashed gap-1 font-normal">
+        <Badge variant="secondary" className="gap-1 opacity-70">
           <HelpCircle className="h-3 w-3" />
           Not Marked
         </Badge>
@@ -161,12 +178,169 @@ export default function TeacherAttendanceStudents({
     }
   };
 
+  const columnHelper = createColumnHelper<DataTableFeatures, StudentTypes>();
+
+  const columns = columnHelper.columns([
+    columnHelper.display({
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    }),
+    columnHelper.accessor("id", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          #ID
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUpIcon className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowDownIcon className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
+      cell: ({ row }) => <span className="font-mono text-sm">{row.original.id}</span>,
+    }),
+    columnHelper.accessor(
+      (row) => `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() || `Student #${row.id}`,
+      {
+        id: "name",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Student Name
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row }) => {
+          const fullName =
+            `${row.original.first_name ?? ""} ${row.original.last_name ?? ""}`.trim() ||
+            `Student #${row.original.id}`;
+          return <span className="font-medium text-foreground">{fullName}</span>;
+        },
+      }
+    ),
+    columnHelper.accessor("email", {
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUpIcon className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowDownIcon className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <span className="inline-flex items-center gap-1.5 text-muted-foreground text-sm">
+          <Mail className="h-3.5 w-3.5 opacity-60" />
+          {row.original.email ?? "—"}
+        </span>
+      ),
+    }),
+    columnHelper.accessor(
+      (row) => row.classe?.code ?? row.classe?.name ?? "—",
+      {
+        id: "classe",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Class
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row }) => (
+          <Badge variant="outline" className="font-mono text-xs">
+            {row.original.classe?.code ?? row.original.classe?.name ?? "—"}
+          </Badge>
+        ),
+      }
+    ),
+    columnHelper.display({
+      id: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const studentId = Number(row.original.id);
+        const record = recordMap.get(studentId);
+        return renderStatusBadge(record);
+      },
+    }),
+    columnHelper.display({
+      id: "actions",
+      header: () => <div className="text-right">Action</div>,
+      cell: ({ row }) => {
+        const student = row.original;
+        const studentId = Number(student.id);
+        const record = recordMap.get(studentId);
+        return (
+          <div className="flex items-center justify-end">
+            {record ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1"
+                onClick={() => handleOpenEditModal(student, record)}
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                Edit
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                className="h-8 gap-1"
+                onClick={() => handleOpenAddModal(student)}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Mark
+              </Button>
+            )}
+          </div>
+        );
+      },
+    }),
+  ]);
+
   return (
     <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
         <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2 -ml-2 text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="mb-2 -ml-2 text-muted-foreground hover:text-foreground"
+            onClick={onBack}
+          >
             <ArrowLeft className="h-4 w-4 mr-1" />
             Back to Sessions
           </Button>
@@ -195,7 +369,7 @@ export default function TeacherAttendanceStudents({
         </div>
       </div>
 
-      {/* Main Student List */}
+      {/* Main Student List with Shadcn DataTable */}
       {loading ? (
         <div className="flex h-64 items-center justify-center">
           <SpinnerSize />
@@ -210,67 +384,7 @@ export default function TeacherAttendanceStudents({
           </CardHeader>
         </Card>
       ) : (
-        <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-muted/50 text-muted-foreground uppercase text-xs border-b">
-                <tr>
-                  <th className="px-6 py-3 font-medium">Student Name</th>
-                  <th className="px-6 py-3 font-medium">Email</th>
-                  <th className="px-6 py-3 font-medium">Class</th>
-                  <th className="px-6 py-3 font-medium">Status</th>
-                  <th className="px-6 py-3 font-medium text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {students.map((student) => {
-                  const studentId = Number(student.id);
-                  const record = recordMap.get(studentId);
-                  const fullName = `${student.first_name ?? ""} ${student.last_name ?? ""}`.trim() || `Student #${student.id}`;
-
-                  return (
-                    <tr key={student.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4 font-medium text-foreground">
-                        {fullName}
-                      </td>
-                      <td className="px-6 py-4 text-muted-foreground">
-                        {student.email ?? "—"}
-                      </td>
-                      <td className="px-6 py-4 text-muted-foreground">
-                        {student.classe?.code ?? student.classe?.name ?? "—"}
-                      </td>
-                      <td className="px-6 py-4">
-                        {renderStatusBadge(record)}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        {record ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 gap-1"
-                            onClick={() => handleOpenEditModal(student, record)}
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                            Edit
-                          </Button>
-                        ) : (
-                          <Button
-                            size="sm"
-                            className="h-8 gap-1"
-                            onClick={() => handleOpenAddModal(student)}
-                          >
-                            <Plus className="h-3.5 w-3.5" />
-                            Mark
-                          </Button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <DataTable columns={columns} data={students} />
       )}
 
       {/* Attendance Modal (Dialog) */}

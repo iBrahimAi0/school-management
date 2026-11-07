@@ -32,6 +32,7 @@ export type ExamType = {
   classe: {
     id: number;
     code: string;
+    name?: string;
   } | null;
 
   updated_at?: string;

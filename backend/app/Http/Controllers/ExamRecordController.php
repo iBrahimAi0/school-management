@@ -6,15 +6,23 @@ use App\Models\ExamRecord;
 use App\Http\Requests\StoreExamRecordRequest;
 use App\Http\Requests\UpdateExamRecordRequest;
 use App\Http\Resources\ExamRecordResource;
+use Illuminate\Http\Request;
 
 class ExamRecordController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $examRecords = ExamRecord::with(['student:id,first_name,last_name', 'exam:id,name'])->latest()->get();
+        $query = ExamRecord::with(['student:id,first_name,last_name', 'exam:id,name'])->latest();
+
+        if ($request->filled('exam_id')) {
+            $query->where('exam_id', $request->query('exam_id'));
+        }
+
+        $examRecords = $query->get();
+
         return response()->json([
             'examRecords' => ExamRecordResource::collection($examRecords),
             'message' => 'Exam Records list sent successfully',
@@ -35,11 +43,21 @@ class ExamRecordController extends Controller
     public function store(StoreExamRecordRequest $request)
     {
         $data = $request->validated();
-        $createdExamRecord = new ExamRecordResource(ExamRecord::create($data));
+        $createdExamRecord = ExamRecord::updateOrCreate(
+            [
+                'exam_id' => $data['exam_id'],
+                'user_id' => $data['user_id'],
+            ],
+            [
+                'note' => $data['note'],
+                'comment' => $data['comment'] ?? null,
+            ]
+        );
+        $createdExamRecord->load(['student:id,first_name,last_name', 'exam:id,name']);
 
         return response()->json([
-            'examRecord' => $createdExamRecord,
-            'message' => 'Exam Record created successfully'
+            'examRecord' => new ExamRecordResource($createdExamRecord),
+            'message' => 'Exam Record saved successfully'
         ]);
     }
 

@@ -26,7 +26,7 @@ class UpdateExamRecordRequest extends FormRequest
             'exam_id' => ['required', 'integer', 'exists:exams,id'],
             'user_id' => ['required', 'integer', 'exists:users,id'],
             'note' => ['required', 'numeric', 'min:0', 'max:20'],
-            'comment' => ['nullable', 'string', 'min:5', 'max:100'],
+            'comment' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

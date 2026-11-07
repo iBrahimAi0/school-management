@@ -2,101 +2,113 @@
 
 import { useUserContext } from "@/context/UserProvider";
 import { BookOpen, Calendar, CheckCircle2, Clock } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function StudentDashboard() {
   const { user } = useUserContext();
 
+  const studentName =
+    user?.name ||
+    `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() ||
+    "Student";
+
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">
-          Hi, {user?.name ?? "Student"} 👋
-        </h2>
+        <h1 className="text-2xl font-bold tracking-tight">
+          Hi, {studentName} 👋
+        </h1>
         <p className="text-muted-foreground text-sm">
-          Welcome back to your school management overview.
+          Welcome back to your student dashboard and learning portal.
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-muted-foreground">
+      {/* Stats Cards with Shadcn Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Enrolled Courses
-            </h3>
-            <BookOpen className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <p className="text-3xl font-bold mt-2">6</p>
-          <p className="text-xs text-muted-foreground mt-1">Current Semester</p>
-        </div>
+            </CardTitle>
+            <BookOpen className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">6</div>
+            <p className="text-xs text-muted-foreground mt-1">Current Academic Term</p>
+          </CardContent>
+        </Card>
 
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-muted-foreground">
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Attendance Rate
-            </h3>
-            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          </div>
-          <p className="text-3xl font-bold mt-2 text-emerald-600">96%</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Above requirement
-          </p>
-        </div>
+            </CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-emerald-600">96%</div>
+            <p className="text-xs text-muted-foreground mt-1">Above requirement</p>
+          </CardContent>
+        </Card>
 
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-muted-foreground">
-              Pending Tasks
-            </h3>
-            <Clock className="h-5 w-5 text-amber-600" />
-          </div>
-          <p className="text-3xl font-bold mt-2 text-amber-600">3</p>
-          <p className="text-xs text-muted-foreground mt-1">Due this week</p>
-        </div>
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Upcoming Assessments
+            </CardTitle>
+            <Clock className="h-4 w-4 text-amber-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-amber-600">3</div>
+            <p className="text-xs text-muted-foreground mt-1">Scheduled this month</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Quick Schedule / Courses */}
-      <div className="rounded-xl border bg-card p-6 shadow-sm">
-        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-primary" />
-          <span>Upcoming Classes Today</span>
-        </h3>
-        <div className="divide-y divide-border">
-          <div className="py-3 flex items-center justify-between">
-            <div>
-              <p className="font-medium">Mathematics 101</p>
-              <p className="text-xs text-muted-foreground">
-                Room 204 • Prof. Davis
-              </p>
+      {/* Class Schedule Card */}
+      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            <span>Today's Class Schedule</span>
+          </CardTitle>
+          <CardDescription>
+            Your scheduled lectures and classes for today.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="divide-y">
+            <div className="py-3 flex items-center justify-between">
+              <div>
+                <p className="font-medium text-sm">Mathematics 101</p>
+                <p className="text-xs text-muted-foreground">Room 204 &bull; Prof. Davis</p>
+              </div>
+              <Badge variant="secondary">09:00 - 10:30 AM</Badge>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded bg-muted">
-              09:00 - 10:30 AM
-            </span>
-          </div>
-          <div className="py-3 flex items-center justify-between">
-            <div>
-              <p className="font-medium">Physics Lab</p>
-              <p className="text-xs text-muted-foreground">
-                Science Hall B • Prof. Adams
-              </p>
+            <div className="py-3 flex items-center justify-between">
+              <div>
+                <p className="font-medium text-sm">Physics Lab</p>
+                <p className="text-xs text-muted-foreground">Science Hall B &bull; Prof. Adams</p>
+              </div>
+              <Badge variant="secondary">11:00 - 12:30 PM</Badge>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded bg-muted">
-              11:00 - 12:30 PM
-            </span>
-          </div>
-          <div className="py-3 flex items-center justify-between">
-            <div>
-              <p className="font-medium">Computer Science</p>
-              <p className="text-xs text-muted-foreground">
-                Lab 3 • Prof. Clark
-              </p>
+            <div className="py-3 flex items-center justify-between">
+              <div>
+                <p className="font-medium text-sm">Computer Science</p>
+                <p className="text-xs text-muted-foreground">Lab 3 &bull; Prof. Clark</p>
+              </div>
+              <Badge variant="secondary">02:00 - 03:30 PM</Badge>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded bg-muted">
-              02:00 - 03:30 PM
-            </span>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -6,6 +6,7 @@ use App\Models\Exam;
 use App\Http\Requests\StoreExamRequest;
 use App\Http\Requests\UpdateExamRequest;
 use App\Http\Resources\ExamResource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ExamController extends Controller
@@ -13,17 +14,45 @@ class ExamController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $exams = Exam::with([
-            'classe:id,code',
+        $query = Exam::with([
+            'classe:id,code,name',
             'course:id,name',
             'teacher:id,first_name,last_name',
-        ])->latest()->get();
+        ])->latest();
+
+        if ($request->filled('teacher_id')) {
+            $query->where('teacher_id', $request->query('teacher_id'));
+        }
+
+        $exams = $query->get();
 
         return response()->json([
             'exams' => ExamResource::collection($exams),
             'message' => 'exams list sent successfully'
+        ]);
+    }
+
+    public function teacherExams($teacherId)
+    {
+        $exams = Exam::with([
+            'classe:id,code,name',
+            'course:id,name',
+            'teacher:id,first_name,last_name',
+        ])
+            ->where(function ($query) use ($teacherId) {
+                $query->where('teacher_id', $teacherId)
+                    ->orWhereHas('classe', function ($q) use ($teacherId) {
+                        $q->where('teacher_id', $teacherId);
+                    });
+            })
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'teacherExams' => ExamResource::collection($exams),
+            'message' => 'Teacher exams sent successfully'
         ]);
     }
 

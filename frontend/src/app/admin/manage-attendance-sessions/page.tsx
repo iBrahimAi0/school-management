@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { AttendanceSession } from "@/types/AdminTypes/AttendanceSessionValuesType";
 import { AttendanceSessionForm } from "@/components/AdminParts/AttendanceSessionComponents/AttendanceSessionForm";
 import AttendanceSessionsList from "@/components/AdminParts/AttendanceSessionComponents/AttendanceSessionsList";
@@ -27,24 +33,26 @@ export default function ManageAttendanceSessions() {
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <AttendanceSessionsList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Attendance Session</FieldLegend>
-              <FieldDescription>
-                Here you can create a Attendance Session
-              </FieldDescription>
-            </div>
-            <AttendanceSessionForm
-              handleSubmit={(values: AttendanceSession) =>
-                addAttendanceSession(values)
-              }
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Create Attendance Session</CardTitle>
+              <CardDescription>
+                Open a new attendance tracking session for a class or course.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AttendanceSessionForm
+                handleSubmit={(values: AttendanceSession) =>
+                  addAttendanceSession(values)
+                }
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>

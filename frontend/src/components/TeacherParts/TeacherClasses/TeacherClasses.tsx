@@ -1,11 +1,14 @@
 "use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { BookOpen, Users, GraduationCap } from "lucide-react";
 import ClasseApi from "@/api/Classe/ClasseApi";
 import { SpinnerSize } from "@/components/Spinners/Spiner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -13,8 +16,6 @@ import {
 } from "@/components/ui/card";
 import { useUserContext } from "@/context/UserProvider";
 import { TeacherClassesType } from "@/types/TeacherTypes/TeacherClassesType";
-import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export function TeacherClasses() {
   const [classes, setClasses] = useState<TeacherClassesType[]>([]);
@@ -22,9 +23,7 @@ export function TeacherClasses() {
   const { user } = useUserContext();
 
   useEffect(() => {
-    if (!user?.id) {
-      return;
-    }
+    if (!user?.id) return;
 
     const fetchClasses = async () => {
       try {
@@ -42,41 +41,63 @@ export function TeacherClasses() {
   }, [user?.id]);
 
   return (
-    <div className="flex flex-wrap gap-5 items-start">
+    <div className="space-y-6">
+      {/* Section Header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">My Classes</h1>
+        <p className="text-sm text-muted-foreground">
+          View assigned classes, track student rosters, and manage classroom activities.
+        </p>
+      </div>
+
       {loading ? (
-        <div className="flex h-100 m-auto max-w-100 items-center justify-center">
+        <div className="flex h-64 items-center justify-center">
           <SpinnerSize />
         </div>
       ) : classes.length === 0 ? (
-        <div className="w-full text-center py-10 text-muted-foreground">
-          No classes assigned to you yet.
-        </div>
+        <Card className="text-center py-12">
+          <CardHeader>
+            <CardTitle>No classes found</CardTitle>
+            <CardDescription>
+              You do not have any classes assigned to your account yet.
+            </CardDescription>
+          </CardHeader>
+        </Card>
       ) : (
-        classes.map((classe, key) => (
-          <Card className="relative mx-auto w-full max-w-sm pt-0" key={key}>
-            <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
-            <img
-              src="/classeImage.png"
-              alt="Event cover"
-              className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
-            />
-            <CardHeader>
-              <CardAction>
-                <Badge variant="secondary">{classe.code}</Badge>
-              </CardAction>
-              <CardTitle>{classe.name}</CardTitle>
-              <CardDescription>{classe.class_type?.name}</CardDescription>
-            </CardHeader>
-            <CardFooter>
-              <Button asChild className="w-full">
-                <Link
-                  href={`/teacher/classes/students?classeId=${classe.id}&classeName=${encodeURIComponent(classe.name)}`}>
-                  View Students
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        ))
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {classes.map((classe) => (
+            <Card
+              key={classe.id}
+              className="shadow-sm hover:shadow transition-shadow flex flex-col justify-between"
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between mb-1">
+                  <Badge variant="secondary" className="font-mono text-xs">
+                    {classe.code}
+                  </Badge>
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <CardTitle className="text-lg">{classe.name}</CardTitle>
+                <CardDescription>
+                  Program: {classe.class_type?.name ?? "Standard Academic"}
+                </CardDescription>
+              </CardHeader>
+
+              <CardFooter className="pt-2 border-t">
+                <Button asChild className="w-full" size="sm">
+                  <Link
+                    href={`/teacher/classes/students?classeId=${classe.id}&classeName=${encodeURIComponent(
+                      classe.name
+                    )}`}
+                  >
+                    <Users className="h-4 w-4 mr-1.5" />
+                    View Students
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
       )}
     </div>
   );

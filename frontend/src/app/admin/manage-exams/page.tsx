@@ -4,15 +4,18 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
-import TeachersList from "@/components/AdminParts/TeacherComponents/TeachersList";
-import { TeachersForm } from "@/components/AdminParts/TeacherComponents/TeachersForm";
-import { TeacherValuesType } from "@/types/AdminTypes/TeacherValuesType";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import ExamsList from "@/components/AdminParts/ExamComponents/ExamsList";
 import { ExamForm } from "@/components/AdminParts/ExamComponents/ExamForm";
 import { ExamValuesType } from "@/types/AdminTypes/ExamValuesType";
 
-export default function ManageParents() {
+export default function ManageExams() {
   const [isActive, setIsActive] = useState(true);
   const { addExam } = useUserContext();
   return (
@@ -30,20 +33,24 @@ export default function ManageParents() {
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <ExamsList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Exam</FieldLegend>
-              <FieldDescription>Here you can create a exam</FieldDescription>
-            </div>
-            <ExamForm
-              handleSubmit={(values: ExamValuesType) => addExam(values)}
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Create Exam</CardTitle>
+              <CardDescription>
+                Schedule an academic examination or assessment.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ExamForm
+                handleSubmit={(values: ExamValuesType) => addExam(values)}
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>

@@ -4,12 +4,18 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import StudentsList from "@/components/AdminParts/StudentComponents/StudentsList";
 import { StudentsForm } from "@/components/AdminParts/StudentComponents/StudentsForm";
 import { StudentTypes } from "@/types/AdminTypes/StudentValuesType";
 
-export default function ManageParents() {
+export default function ManageStudents() {
   const [isActive, setIsActive] = useState(true);
   const { addStudent } = useUserContext();
   return (
@@ -27,20 +33,24 @@ export default function ManageParents() {
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <StudentsList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Student</FieldLegend>
-              <FieldDescription>Here you can create a student</FieldDescription>
-            </div>
-            <StudentsForm
-              handleSubmit={(values: StudentTypes) => addStudent(values)}
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Create Student</CardTitle>
+              <CardDescription>
+                Register a new student into the school directory.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <StudentsForm
+                handleSubmit={(values: StudentTypes) => addStudent(values)}
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>

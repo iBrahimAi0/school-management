@@ -4,13 +4,16 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import ExamRecordsList from "@/components/AdminParts/ExamRecordComponents/ExamRecordsList";
 import { ExamRecordForm } from "@/components/AdminParts/ExamRecordComponents/ExamRecordForm";
-import {
-  ExamRecordFormValuesType,
-  ExamRecordType,
-} from "@/types/AdminTypes/ExamRecordValuesType";
+import { ExamRecordType } from "@/types/AdminTypes/ExamRecordValuesType";
 
 export default function ManageExamRecords() {
   const [isActive, setIsActive] = useState(true);
@@ -30,20 +33,24 @@ export default function ManageExamRecords() {
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <ExamRecordsList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Exam</FieldLegend>
-              <FieldDescription>Here you can create a exam</FieldDescription>
-            </div>
-            <ExamRecordForm
-              handleSubmit={(values: ExamRecordType) => addExamRecord(values)}
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Create Exam Record</CardTitle>
+              <CardDescription>
+                Record marks and feedback for an examination candidate.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ExamRecordForm
+                handleSubmit={(values: ExamRecordType) => addExamRecord(values)}
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>

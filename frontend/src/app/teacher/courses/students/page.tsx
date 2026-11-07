@@ -3,24 +3,35 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { format } from "date-fns";
-import { ArrowLeft, ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
-
-import { DataTableFeatures } from "@/components/DataTable/data-table-features";
-import { DataTable } from "@/components/DataTable/DataTable";
+import {
+  ArrowLeft,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Users,
+  Mail,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { SpinnerSize } from "@/components/Spinners/Spiner";
 import { StudentTypes } from "@/types/AdminTypes/StudentValuesType";
 import CourseApi from "@/api/Course/CourseApi";
 import { useUserContext } from "@/context/UserProvider";
+import { DataTable } from "@/components/DataTable/DataTable";
+import { DataTableFeatures } from "@/components/DataTable/data-table-features";
 
 function TeacherCoursesStudentsContent() {
   const searchParams = useSearchParams();
   const courseId = searchParams.get("courseId");
-  const courseName = searchParams.get("courseName");
+  const courseName = searchParams.get("courseName") ?? "Course";
 
   const [students, setStudents] = useState<StudentTypes[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,7 +48,7 @@ function TeacherCoursesStudentsContent() {
         setLoading(true);
         const res = await CourseApi.getTeacherCourseStudents(
           user.id,
-          Number(courseId),
+          Number(courseId)
         );
         setStudents(res.data.teacherCourseStudents || []);
       } catch (error) {
@@ -76,7 +87,8 @@ function TeacherCoursesStudentsContent() {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           #ID
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
@@ -85,14 +97,40 @@ function TeacherCoursesStudentsContent() {
           )}
         </Button>
       ),
+      cell: ({ row }) => <span className="font-mono text-sm">{row.original.id}</span>,
     }),
-    columnHelper.accessor((row) => row.classe?.code ?? "No Class", {
-      id: "classe",
+    columnHelper.accessor(
+      (row) => `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() || `Student #${row.id}`,
+      {
+        id: "name",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Student Name
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row }) => {
+          const fullName =
+            `${row.original.first_name ?? ""} ${row.original.last_name ?? ""}`.trim() ||
+            `Student #${row.original.id}`;
+          return <span className="font-medium text-foreground">{fullName}</span>;
+        },
+      }
+    ),
+    columnHelper.accessor("email", {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Class Code
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : (
@@ -100,66 +138,43 @@ function TeacherCoursesStudentsContent() {
           )}
         </Button>
       ),
-      cell: ({ row }) => {
-        const classe = row.original.classe;
-        return classe ? (
-          <Badge variant="outline">{classe.code}</Badge>
-        ) : (
-          <span className="text-muted-foreground italic text-sm">Not assigned</span>
-        );
-      },
-    }),
-    columnHelper.accessor("first_name", {
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          First Name
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          )}
-        </Button>
+      cell: ({ row }) => (
+        <span className="inline-flex items-center gap-1.5 text-muted-foreground text-sm">
+          <Mail className="h-3.5 w-3.5 opacity-60" />
+          {row.original.email ?? "—"}
+        </span>
       ),
     }),
-    columnHelper.accessor("last_name", {
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Last Name
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          )}
-        </Button>
-      ),
-    }),
-    columnHelper.accessor("date_of_birth", {
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Date of Birth
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          )}
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const date = new Date(row.original.date_of_birth);
-        return isNaN(date.getTime()) ? "Invalid date" : format(date, "dd/MM/yyyy");
-      },
-    }),
+    columnHelper.accessor(
+      (row) => row.classe?.code ?? row.classe?.name ?? "No Class",
+      {
+        id: "classe",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Class
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row }) => (
+          <Badge variant="outline" className="font-mono text-xs">
+            {row.original.classe?.code ?? row.original.classe?.name ?? "No Class"}
+          </Badge>
+        ),
+      }
+    ),
     columnHelper.accessor("gender", {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Gender
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
@@ -169,8 +184,12 @@ function TeacherCoursesStudentsContent() {
         </Button>
       ),
       cell: ({ row }) => (
-        <span className="capitalize">
-          {row.original.gender === "m" ? "Male" : "Female"}
+        <span className="capitalize text-muted-foreground text-sm">
+          {row.original.gender === "m"
+            ? "Male"
+            : row.original.gender === "f"
+            ? "Female"
+            : "—"}
         </span>
       ),
     }),
@@ -178,8 +197,9 @@ function TeacherCoursesStudentsContent() {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Blood Type
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Blood Group
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : (
@@ -187,95 +207,78 @@ function TeacherCoursesStudentsContent() {
           )}
         </Button>
       ),
-    }),
-    columnHelper.accessor("email", {
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Email
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          )}
-        </Button>
+      cell: ({ row }) => (
+        <span className="font-mono text-xs text-muted-foreground">
+          {row.original.blood_type ?? "—"}
+        </span>
       ),
     }),
     columnHelper.accessor(
       (row) =>
-        row.parent?.first_name
-          ? `${row.parent.first_name} ${row.parent.last_name}`
-          : "No Parent",
+        row.parent
+          ? `${row.parent.first_name ?? ""} ${row.parent.last_name ?? ""}`.trim()
+          : "Not Listed",
       {
         id: "parent",
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-            Parent
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowDownIcon className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        ),
+        header: "Parent Contact",
         cell: ({ row }) => {
           const parent = row.original.parent;
-          return parent ? (
-            <span className="font-medium">
-              {parent.first_name} {parent.last_name}
-            </span>
-          ) : (
-            <span className="text-muted-foreground italic text-sm">Not assigned</span>
+          if (!parent) return <span className="text-muted-foreground/60 italic text-sm">Not Listed</span>;
+          const parentName = `${parent.first_name ?? ""} ${parent.last_name ?? ""}`.trim();
+          return (
+            <div className="text-sm">
+              <span className="font-medium text-foreground">{parentName}</span>
+            </div>
           );
         },
-      },
+      }
     ),
   ]);
 
-  if (!courseId) {
-    return (
-      <div className="container mx-auto py-10 space-y-4">
-        <Button variant="outline" asChild>
-          <Link href="/teacher/courses" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to My Courses</span>
-          </Link>
-        </Button>
-        <div className="rounded-xl border p-8 text-center text-muted-foreground">
-          No course selected. Please select a course from My Courses.
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto py-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/teacher/courses" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to My Courses</span>
-          </Link>
-        </Button>
+    <div className="space-y-6">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+        <div>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="mb-2 -ml-2 text-muted-foreground hover:text-foreground"
+          >
+            <Link href="/teacher/courses">
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back to Courses
+            </Link>
+          </Button>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {courseName} &bull; Enrolled Students
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Students actively registered in classes taking this course.
+          </p>
+        </div>
 
-        {courseName && (
-          <h2 className="text-lg font-semibold text-foreground">
-            Course: <span className="text-primary">{courseName}</span>
-          </h2>
-        )}
+        <Badge variant="secondary" className="px-3 py-1.5 text-xs w-fit">
+          <Users className="h-3.5 w-3.5 mr-1.5" />
+          Enrolled: {students.length} Students
+        </Badge>
       </div>
 
+      {/* Main Student List with Shadcn DataTable */}
       {loading ? (
         <div className="flex h-64 items-center justify-center">
           <SpinnerSize />
         </div>
       ) : students.length === 0 ? (
-        <div className="rounded-xl border p-8 text-center text-muted-foreground">
-          No students are currently enrolled in this course.
-        </div>
+        <Card className="text-center py-12">
+          <CardHeader>
+            <CardTitle>No students found</CardTitle>
+            <CardDescription>
+              There are no students currently enrolled in this course.
+            </CardDescription>
+          </CardHeader>
+        </Card>
       ) : (
         <DataTable columns={columns} data={students} />
       )}
@@ -290,7 +293,8 @@ export default function TeacherCoursesStudentsPage() {
         <div className="flex h-64 items-center justify-center">
           <SpinnerSize />
         </div>
-      }>
+      }
+    >
       <TeacherCoursesStudentsContent />
     </Suspense>
   );

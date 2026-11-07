@@ -4,15 +4,18 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
-import TeachersList from "@/components/AdminParts/TeacherComponents/TeachersList";
-import { TeachersForm } from "@/components/AdminParts/TeacherComponents/TeachersForm";
-import { TeacherValuesType } from "@/types/AdminTypes/TeacherValuesType";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import ClassTypesList from "@/components/AdminParts/ClassTypeComponents/ClassTypesList";
 import { ClassTypeForm } from "@/components/AdminParts/ClassTypeComponents/ClassTypeForm";
 import { ClassTypeValuesType } from "@/types/AdminTypes/ClassTypeValuesType";
 
-export default function ManageParents() {
+export default function ManageClassTypes() {
   const [isActive, setIsActive] = useState(true);
   const { addClassType } = useUserContext();
   return (
@@ -30,24 +33,26 @@ export default function ManageParents() {
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <ClassTypesList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Class Type</FieldLegend>
-              <FieldDescription>
-                Here you can create a class type
-              </FieldDescription>
-            </div>
-            <ClassTypeForm
-              handleSubmit={(values: ClassTypeValuesType) =>
-                addClassType(values)
-              }
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Create Class Type</CardTitle>
+              <CardDescription>
+                Define a new grade level, branch, or class stream.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ClassTypeForm
+                handleSubmit={(values: ClassTypeValuesType) =>
+                  addClassType(values)
+                }
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>

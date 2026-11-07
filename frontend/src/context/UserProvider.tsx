@@ -72,7 +72,7 @@ interface UserStateContextType {
   updateExam: (id: string, examValues: ExamFormValuesType | ExamType) => Promise<any>;
   addExamRecord: (examRecordValues: ExamRecordType) => Promise<any>;
   updateExamRecord: (
-    id: string,
+    id: string | number,
     examRecordValues: ExamRecordType,
   ) => Promise<any>;
   addClassTypeCourse: (
@@ -388,7 +388,7 @@ export const UserProvider = ({
       setLoader(false);
     }
   };
-  const updateExamRecord = async (id: string, values: ExamRecordType) => {
+  const updateExamRecord = async (id: string | number, values: ExamRecordType) => {
     try {
       const response = await ExamRecordApi.updateExamRecord(id, values);
       return response;

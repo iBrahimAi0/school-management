@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import AttendanceRecordsList from "@/components/AdminParts/AttendanceRecordComponents/AttendanceRecordsList";
 import { AttendanceRecordForm } from "@/components/AdminParts/AttendanceRecordComponents/AttendanceRecordForm";
 import { AttendanceRecordFormValues } from "@/types/AdminTypes/AttendanceRecordValuesType";
@@ -27,24 +33,26 @@ export default function ManageAttendanceRecords() {
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <AttendanceRecordsList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Attendance Record</FieldLegend>
-              <FieldDescription>
-                Here you can create a Attendance Record
-              </FieldDescription>
-            </div>
-            <AttendanceRecordForm
-              handleSubmit={(values: AttendanceRecordFormValues) =>
-                addAttendanceRecord(values)
-              }
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Create Attendance Record</CardTitle>
+              <CardDescription>
+                Record student attendance status (present, late, absent).
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AttendanceRecordForm
+                handleSubmit={(values: AttendanceRecordFormValues) =>
+                  addAttendanceRecord(values)
+                }
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>

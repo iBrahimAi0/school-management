@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 import { useUserContext } from "@/context/UserProvider";
-import { FieldDescription, FieldLegend } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ClassTypeCourseFormValues } from "@/types/AdminTypes/ClassTypeCourseValuesTypes";
 import ClassTypeCoursesList from "@/components/AdminParts/ClassTypeCourseComponents/ClassTypeCoursesList";
 import { ClassTypeCourseForm } from "@/components/AdminParts/ClassTypeCourseComponents/ClassTypeCourseForm";
@@ -18,31 +24,35 @@ export default function ManageClassTypeCourse() {
         <Button
           variant={`${isActive ? "default" : "outline"}`}
           onClick={() => setIsActive(true)}>
-          Exam Records
+          Class Courses
         </Button>
         <Button
           variant={`${!isActive ? "default" : "outline"}`}
           onClick={() => setIsActive(false)}>
-          Add new exam record
+          Assign new course
         </Button>
       </ButtonGroup>
 
-      <div className="my-10 ">
+      <div className="my-10">
         {isActive ? (
           <ClassTypeCoursesList />
         ) : (
-          <div className="border p-5 rounded-xl flex flex-col gap-5">
-            <div>
-              <FieldLegend>Create Exam</FieldLegend>
-              <FieldDescription>Here you can create a exam</FieldDescription>
-            </div>
-            <ClassTypeCourseForm
-              handleSubmit={(values: ClassTypeCourseFormValues) =>
-                addClassTypeCourse(values)
-              }
-              mode={"create"}
-            />
-          </div>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Assign Course to Class</CardTitle>
+              <CardDescription>
+                Map a curriculum subject to a specific class type.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ClassTypeCourseForm
+                handleSubmit={(values: ClassTypeCourseFormValues) =>
+                  addClassTypeCourse(values)
+                }
+                mode={"create"}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </>
