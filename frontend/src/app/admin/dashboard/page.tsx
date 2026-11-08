@@ -31,9 +31,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Hi, {adminName} 👋
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">Hi, {adminName}</h1>
         <p className="text-muted-foreground text-sm">
           Welcome to the School Administration Control Panel.
         </p>
@@ -113,31 +111,41 @@ export default function AdminDashboard() {
         <CardContent>
           <div className="flex flex-wrap gap-3">
             <Button asChild variant="outline">
-              <Link href="/admin/manage-teachers" className="flex items-center gap-2">
+              <Link
+                href="/admin/manage-teachers"
+                className="flex items-center gap-2">
                 <GraduationCap className="h-4 w-4" />
                 <span>Teachers Directory</span>
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/admin/manage-students" className="flex items-center gap-2">
+              <Link
+                href="/admin/manage-students"
+                className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 <span>Students Directory</span>
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/admin/manage-parents" className="flex items-center gap-2">
+              <Link
+                href="/admin/manage-parents"
+                className="flex items-center gap-2">
                 <UserRoundGroup className="h-4 w-4" />
                 <span>Parents Directory</span>
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/admin/manage-classes" className="flex items-center gap-2">
+              <Link
+                href="/admin/manage-classes"
+                className="flex items-center gap-2">
                 <Layers className="h-4 w-4" />
                 <span>Manage Classes</span>
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/admin/manage-courses" className="flex items-center gap-2">
+              <Link
+                href="/admin/manage-courses"
+                className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
                 <span>Manage Courses</span>
               </Link>

@@ -40,7 +40,9 @@ export default function ParentDashboard() {
   const { user } = useUserContext();
   const [data, setData] = useState<ParentPortalData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"children" | "attendance" | "grades">("children");
+  const [activeTab, setActiveTab] = useState<
+    "children" | "attendance" | "grades"
+  >("children");
 
   useEffect(() => {
     if (!user?.id) return;
@@ -68,8 +70,13 @@ export default function ParentDashboard() {
   const kpis = useMemo(() => {
     const childrenCount = data?.children?.length ?? 0;
     const attRecords = data?.attendanceRecords ?? [];
-    const presentCount = attRecords.filter((r) => r.status === "present" || r.status === "late").length;
-    const attRate = attRecords.length > 0 ? Math.round((presentCount / attRecords.length) * 100) : 100;
+    const presentCount = attRecords.filter(
+      (r) => r.status === "present" || r.status === "late",
+    ).length;
+    const attRate =
+      attRecords.length > 0
+        ? Math.round((presentCount / attRecords.length) * 100)
+        : 100;
 
     const examRecords = data?.examRecords ?? [];
     let noteSum = 0;
@@ -86,19 +93,35 @@ export default function ParentDashboard() {
   }, [data]);
 
   // Children Columns
-  const childHelper = createColumnHelper<DataTableFeatures, NonNullable<ParentPortalData["children"]>[number]>();
+  const childHelper = createColumnHelper<
+    DataTableFeatures,
+    NonNullable<ParentPortalData["children"]>[number]
+  >();
   const childColumns = childHelper.columns([
     childHelper.accessor("id", {
       header: "#ID",
-      cell: ({ row }) => <span className="font-mono text-xs">{row.original.id}</span>,
+      cell: ({ row }) => (
+        <span className="font-mono text-xs">{row.original.id}</span>
+      ),
     }),
     childHelper.accessor(
-      (row) => `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() || `Child #${row.id}`,
+      (row) =>
+        `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() ||
+        `Child #${row.id}`,
       {
         id: "name",
         header: ({ column }) => (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-            Child Name {column.getIsSorted() === "asc" ? <ArrowUpIcon className="ml-1 h-3.5 w-3.5" /> : <ArrowDownIcon className="ml-1 h-3.5 w-3.5" />}
+          <Button
+            variant="ghost"
+            onClick={() =>
+              column.toggleSorting(column.getIsSorted() === "asc")
+            }>
+            Child Name{" "}
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-1 h-3.5 w-3.5" />
+            ) : (
+              <ArrowDownIcon className="ml-1 h-3.5 w-3.5" />
+            )}
           </Button>
         ),
         cell: ({ row }) => (
@@ -106,39 +129,57 @@ export default function ParentDashboard() {
             <span className="font-semibold text-foreground">
               {row.original.first_name} {row.original.last_name}
             </span>
-            <span className="text-xs text-muted-foreground block">{row.original.email}</span>
+            <span className="text-xs text-muted-foreground block">
+              {row.original.email}
+            </span>
           </div>
         ),
-      }
+      },
     ),
     childHelper.accessor((row) => row.classe?.code ?? row.classe?.name ?? "—", {
       id: "classe",
       header: "Classroom",
       cell: ({ row }) => (
         <Badge variant="outline" className="font-mono text-xs">
-          {row.original.classe?.code ?? row.original.classe?.name ?? "Unassigned"}
+          {row.original.classe?.code ??
+            row.original.classe?.name ??
+            "Unassigned"}
         </Badge>
       ),
     }),
-    childHelper.accessor((row) => row.classe?.class_type?.name ?? "Standard Academic", {
-      id: "level",
-      header: "Grade Level",
-      cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
-          {row.original.classe?.class_type?.name ?? "Standard Academic"}
-        </span>
-      ),
-    }),
+    childHelper.accessor(
+      (row) => row.classe?.class_type?.name ?? "Standard Academic",
+      {
+        id: "level",
+        header: "Grade Level",
+        cell: ({ row }) => (
+          <span className="text-sm text-muted-foreground">
+            {row.original.classe?.class_type?.name ?? "Standard Academic"}
+          </span>
+        ),
+      },
+    ),
     childHelper.display({
       id: "teacher",
       header: "Primary Teacher",
       cell: ({ row }) => {
         const teacher = row.original.classe?.teacher;
-        if (!teacher) return <span className="text-muted-foreground italic text-xs">Not Assigned</span>;
+        if (!teacher)
+          return (
+            <span className="text-muted-foreground italic text-xs">
+              Not Assigned
+            </span>
+          );
         return (
           <div className="text-sm">
-            <span className="font-medium text-foreground">{teacher.first_name} {teacher.last_name}</span>
-            {teacher.email && <span className="text-xs text-muted-foreground block">{teacher.email}</span>}
+            <span className="font-medium text-foreground">
+              {teacher.first_name} {teacher.last_name}
+            </span>
+            {teacher.email && (
+              <span className="text-xs text-muted-foreground block">
+                {teacher.email}
+              </span>
+            )}
           </div>
         );
       },
@@ -147,7 +188,9 @@ export default function ParentDashboard() {
       id: "status",
       header: "Academic Standing",
       cell: () => (
-        <Badge variant="outline" className="text-emerald-700 bg-emerald-500/10 border-emerald-500/30">
+        <Badge
+          variant="outline"
+          className="text-emerald-700 bg-emerald-500/10 border-emerald-500/30">
           Good Standing
         </Badge>
       ),
@@ -155,15 +198,22 @@ export default function ParentDashboard() {
   ]);
 
   // Attendance Columns
-  const attHelper = createColumnHelper<DataTableFeatures, NonNullable<ParentPortalData["attendanceRecords"]>[number]>();
+  const attHelper = createColumnHelper<
+    DataTableFeatures,
+    NonNullable<ParentPortalData["attendanceRecords"]>[number]
+  >();
   const attColumns = attHelper.columns([
     attHelper.accessor("id", {
       header: "#ID",
-      cell: ({ row }) => <span className="font-mono text-xs">{row.original.id}</span>,
+      cell: ({ row }) => (
+        <span className="font-mono text-xs">{row.original.id}</span>
+      ),
     }),
     attHelper.accessor(
       (row) =>
-        row.student ? `${row.student.first_name} ${row.student.last_name}` : "Child",
+        row.student
+          ? `${row.student.first_name} ${row.student.last_name}`
+          : "Child",
       {
         id: "student",
         header: "Student / Child",
@@ -172,18 +222,27 @@ export default function ParentDashboard() {
             {row.original.student?.first_name} {row.original.student?.last_name}
           </span>
         ),
-      }
+      },
     ),
     attHelper.accessor((row) => row.attendance_session?.date ?? "—", {
       id: "date",
       header: "Session Date",
-      cell: ({ row }) => <span>{row.original.attendance_session?.date ?? "—"}</span>,
+      cell: ({ row }) => (
+        <span>{row.original.attendance_session?.date ?? "—"}</span>
+      ),
     }),
-    attHelper.accessor((row) => row.attendance_session?.course?.name ?? "General", {
-      id: "course",
-      header: "Course Subject",
-      cell: ({ row }) => <span>{row.original.attendance_session?.course?.name ?? "General Lecture"}</span>,
-    }),
+    attHelper.accessor(
+      (row) => row.attendance_session?.course?.name ?? "General",
+      {
+        id: "course",
+        header: "Course Subject",
+        cell: ({ row }) => (
+          <span>
+            {row.original.attendance_session?.course?.name ?? "General Lecture"}
+          </span>
+        ),
+      },
+    ),
     attHelper.accessor("status", {
       header: "Status",
       cell: ({ row }) => {
@@ -212,15 +271,22 @@ export default function ParentDashboard() {
   ]);
 
   // Grades Columns
-  const gradeHelper = createColumnHelper<DataTableFeatures, NonNullable<ParentPortalData["examRecords"]>[number]>();
+  const gradeHelper = createColumnHelper<
+    DataTableFeatures,
+    NonNullable<ParentPortalData["examRecords"]>[number]
+  >();
   const gradeColumns = gradeHelper.columns([
     gradeHelper.accessor("id", {
       header: "#ID",
-      cell: ({ row }) => <span className="font-mono text-xs">{row.original.id}</span>,
+      cell: ({ row }) => (
+        <span className="font-mono text-xs">{row.original.id}</span>
+      ),
     }),
     gradeHelper.accessor(
       (row) =>
-        row.student ? `${row.student.first_name} ${row.student.last_name}` : "Child",
+        row.student
+          ? `${row.student.first_name} ${row.student.last_name}`
+          : "Child",
       {
         id: "student",
         header: "Student / Child",
@@ -229,7 +295,7 @@ export default function ParentDashboard() {
             {row.original.student?.first_name} {row.original.student?.last_name}
           </span>
         ),
-      }
+      },
     ),
     gradeHelper.accessor((row) => row.exam?.name ?? "Assessment", {
       id: "exam",
@@ -239,7 +305,9 @@ export default function ParentDashboard() {
     gradeHelper.accessor((row) => row.exam?.course?.name ?? "General", {
       id: "course",
       header: "Course Subject",
-      cell: ({ row }) => <span>{row.original.exam?.course?.name ?? "General"}</span>,
+      cell: ({ row }) => (
+        <span>{row.original.exam?.course?.name ?? "General"}</span>
+      ),
     }),
     gradeHelper.accessor("note", {
       header: "Score",
@@ -278,11 +346,10 @@ export default function ParentDashboard() {
     <div className="space-y-6">
       {/* Banner */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Hi, {parentName} 👋
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">Hi, {parentName}</h1>
         <p className="text-muted-foreground text-sm">
-          Welcome to the School Parent Portal and child academic monitoring overview.
+          Welcome to the School Parent Portal and child academic monitoring
+          overview.
         </p>
       </div>
 
@@ -296,8 +363,12 @@ export default function ParentDashboard() {
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "—" : kpis.childrenCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Registered in institution</p>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : kpis.childrenCount}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Registered in institution
+            </p>
           </CardContent>
         </Card>
 
@@ -309,8 +380,12 @@ export default function ParentDashboard() {
             <CalendarCheck2 className="h-4 w-4 text-emerald-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-600">{loading ? "—" : `${kpis.attRate}%`}</div>
-            <p className="text-xs text-muted-foreground mt-1">Combined attendance standing</p>
+            <div className="text-2xl font-bold text-emerald-600">
+              {loading ? "—" : `${kpis.attRate}%`}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Combined attendance standing
+            </p>
           </CardContent>
         </Card>
 
@@ -322,8 +397,12 @@ export default function ParentDashboard() {
             <GraduationCap className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "—" : `${kpis.avgGrade} / 20`}</div>
-            <p className="text-xs text-muted-foreground mt-1">Academic performance</p>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : `${kpis.avgGrade} / 20`}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Academic performance
+            </p>
           </CardContent>
         </Card>
 
@@ -335,47 +414,68 @@ export default function ParentDashboard() {
             <BookOpen className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "—" : (data?.children?.[0]?.classe?.code ?? "Assigned")}</div>
-            <p className="text-xs text-muted-foreground mt-1">Classroom section</p>
+            <div className="text-2xl font-bold">
+              {loading
+                ? "—"
+                : (data?.children?.[0]?.classe?.code ?? "Assigned")}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Classroom section
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Quick Action Buttons */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Button asChild variant="outline" className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
+        <Button
+          asChild
+          variant="outline"
+          className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
           <Link href="/parent/children">
             <div className="flex items-center gap-3">
               <Users className="h-5 w-5 text-primary" />
               <div className="text-left">
                 <div className="font-semibold text-sm">My Children</div>
-                <div className="text-xs text-muted-foreground">View child profile & classes</div>
+                <div className="text-xs text-muted-foreground">
+                  View child profile & classes
+                </div>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </Link>
         </Button>
 
-        <Button asChild variant="outline" className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
+        <Button
+          asChild
+          variant="outline"
+          className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
           <Link href="/parent/attendance">
             <div className="flex items-center gap-3">
               <CalendarCheck2 className="h-5 w-5 text-primary" />
               <div className="text-left">
                 <div className="font-semibold text-sm">Attendance Records</div>
-                <div className="text-xs text-muted-foreground">Review absence history</div>
+                <div className="text-xs text-muted-foreground">
+                  Review absence history
+                </div>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </Link>
         </Button>
 
-        <Button asChild variant="outline" className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
+        <Button
+          asChild
+          variant="outline"
+          className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
           <Link href="/parent/grades">
             <div className="flex items-center gap-3">
               <GraduationCap className="h-5 w-5 text-primary" />
               <div className="text-left">
                 <div className="font-semibold text-sm">Exams & Grading</div>
-                <div className="text-xs text-muted-foreground">View test marks & notes</div>
+                <div className="text-xs text-muted-foreground">
+                  View test marks & notes
+                </div>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
@@ -387,29 +487,29 @@ export default function ParentDashboard() {
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold tracking-tight">Parent Overview Ledger</h2>
+            <h2 className="text-xl font-bold tracking-tight">
+              Parent Overview Ledger
+            </h2>
             <p className="text-sm text-muted-foreground">
-              Monitor your children's presence, tests, and academic standing in real-time.
+              Monitor your children's presence, tests, and academic standing in
+              real-time.
             </p>
           </div>
 
           <ButtonGroup>
             <Button
               variant={activeTab === "children" ? "default" : "outline"}
-              onClick={() => setActiveTab("children")}
-            >
+              onClick={() => setActiveTab("children")}>
               Children ({data?.children?.length ?? 0})
             </Button>
             <Button
               variant={activeTab === "attendance" ? "default" : "outline"}
-              onClick={() => setActiveTab("attendance")}
-            >
+              onClick={() => setActiveTab("attendance")}>
               Attendance Records ({data?.attendanceRecords?.length ?? 0})
             </Button>
             <Button
               variant={activeTab === "grades" ? "default" : "outline"}
-              onClick={() => setActiveTab("grades")}
-            >
+              onClick={() => setActiveTab("grades")}>
               Grades ({data?.examRecords?.length ?? 0})
             </Button>
           </ButtonGroup>
@@ -425,7 +525,8 @@ export default function ParentDashboard() {
               <CardHeader>
                 <CardTitle>No children registered</CardTitle>
                 <CardDescription>
-                  There are no student accounts linked to this parent profile yet.
+                  There are no student accounts linked to this parent profile
+                  yet.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -443,21 +544,22 @@ export default function ParentDashboard() {
               </CardHeader>
             </Card>
           ) : (
-            <DataTable columns={attColumns} data={data?.attendanceRecords ?? []} />
+            <DataTable
+              columns={attColumns}
+              data={data?.attendanceRecords ?? []}
+            />
           )
+        ) : data?.examRecords?.length === 0 ? (
+          <Card className="text-center py-12">
+            <CardHeader>
+              <CardTitle>No exam grades recorded</CardTitle>
+              <CardDescription>
+                No examination marks have been published for your children yet.
+              </CardDescription>
+            </CardHeader>
+          </Card>
         ) : (
-          data?.examRecords?.length === 0 ? (
-            <Card className="text-center py-12">
-              <CardHeader>
-                <CardTitle>No exam grades recorded</CardTitle>
-                <CardDescription>
-                  No examination marks have been published for your children yet.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ) : (
-            <DataTable columns={gradeColumns} data={data?.examRecords ?? []} />
-          )
+          <DataTable columns={gradeColumns} data={data?.examRecords ?? []} />
         )}
       </div>
     </div>

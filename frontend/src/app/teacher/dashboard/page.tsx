@@ -50,12 +50,13 @@ export default function TeacherDashboard() {
     const loadDashboardData = async () => {
       try {
         setLoading(true);
-        const [classesRes, coursesRes, studentsRes, examsRes] = await Promise.all([
-          ClasseApi.getTeacherClasses(user.id),
-          CourseApi.getTeacherCourses(user.id),
-          StudentApi.getTeacherStudents(user.id),
-          ExamApi.getTeacherExams(user.id),
-        ]);
+        const [classesRes, coursesRes, studentsRes, examsRes] =
+          await Promise.all([
+            ClasseApi.getTeacherClasses(user.id),
+            CourseApi.getTeacherCourses(user.id),
+            StudentApi.getTeacherStudents(user.id),
+            ExamApi.getTeacherExams(user.id),
+          ]);
 
         const classes = classesRes.data?.teacherClasses ?? [];
         const courses = coursesRes.data?.teacherCourses ?? [];
@@ -79,7 +80,10 @@ export default function TeacherDashboard() {
     loadDashboardData();
   }, [user?.id]);
 
-  const columnHelper = createColumnHelper<DataTableFeatures, TeacherClassesType>();
+  const columnHelper = createColumnHelper<
+    DataTableFeatures,
+    TeacherClassesType
+  >();
 
   const columns = columnHelper.columns([
     columnHelper.display({
@@ -105,8 +109,7 @@ export default function TeacherDashboard() {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           #ID
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
@@ -115,14 +118,15 @@ export default function TeacherDashboard() {
           )}
         </Button>
       ),
-      cell: ({ row }) => <span className="font-mono text-sm">{row.original.id}</span>,
+      cell: ({ row }) => (
+        <span className="font-mono text-sm">{row.original.id}</span>
+      ),
     }),
     columnHelper.accessor("name", {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Class Name
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
@@ -131,14 +135,15 @@ export default function TeacherDashboard() {
           )}
         </Button>
       ),
-      cell: ({ row }) => <span className="font-medium text-foreground">{row.original.name}</span>,
+      cell: ({ row }) => (
+        <span className="font-medium text-foreground">{row.original.name}</span>
+      ),
     }),
     columnHelper.accessor("code", {
       header: ({ column }) => (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Class Code
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
@@ -153,27 +158,31 @@ export default function TeacherDashboard() {
         </Badge>
       ),
     }),
-    columnHelper.accessor((row) => row.class_type?.name ?? "Standard Academic", {
-      id: "class_type",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Academic Level
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          )}
-        </Button>
-      ),
-      cell: ({ row }) => (
-        <span className="text-muted-foreground text-sm">
-          {row.original.class_type?.name ?? "Standard Academic"}
-        </span>
-      ),
-    }),
+    columnHelper.accessor(
+      (row) => row.class_type?.name ?? "Standard Academic",
+      {
+        id: "class_type",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() =>
+              column.toggleSorting(column.getIsSorted() === "asc")
+            }>
+            Academic Level
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row }) => (
+          <span className="text-muted-foreground text-sm">
+            {row.original.class_type?.name ?? "Standard Academic"}
+          </span>
+        ),
+      },
+    ),
     columnHelper.display({
       id: "actions",
       header: () => <div className="text-right">Action</div>,
@@ -184,9 +193,8 @@ export default function TeacherDashboard() {
             <Button asChild variant="outline" size="sm" className="h-8">
               <Link
                 href={`/teacher/classes/students?classeId=${cls.id}&classeName=${encodeURIComponent(
-                  cls.name
-                )}`}
-              >
+                  cls.name,
+                )}`}>
                 View Students
               </Link>
             </Button>
@@ -205,11 +213,10 @@ export default function TeacherDashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Hi, {teacherName} 👋
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">Hi, {teacherName}</h1>
         <p className="text-sm text-muted-foreground">
-          Welcome back to your Teacher Portal. Here is an overview of your academic activities.
+          Welcome back to your Teacher Portal. Here is an overview of your
+          academic activities.
         </p>
       </div>
 
@@ -223,8 +230,12 @@ export default function TeacherDashboard() {
             <BookOpen className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "—" : stats.classes}</div>
-            <p className="text-xs text-muted-foreground mt-1">Active class sections</p>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : stats.classes}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Active class sections
+            </p>
           </CardContent>
         </Card>
 
@@ -236,8 +247,12 @@ export default function TeacherDashboard() {
             <Presentation className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "—" : stats.courses}</div>
-            <p className="text-xs text-muted-foreground mt-1">Assigned subjects</p>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : stats.courses}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Assigned subjects
+            </p>
           </CardContent>
         </Card>
 
@@ -249,8 +264,12 @@ export default function TeacherDashboard() {
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "—" : stats.students}</div>
-            <p className="text-xs text-muted-foreground mt-1">Across all classes</p>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : stats.students}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Across all classes
+            </p>
           </CardContent>
         </Card>
 
@@ -262,60 +281,84 @@ export default function TeacherDashboard() {
             <GraduationCap className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "—" : stats.exams}</div>
-            <p className="text-xs text-muted-foreground mt-1">Course assessments</p>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : stats.exams}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Course assessments
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Quick Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Button asChild variant="outline" className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
+        <Button
+          asChild
+          variant="outline"
+          className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
           <Link href="/teacher/classes">
             <div className="flex items-center gap-3">
               <BookOpen className="h-5 w-5 text-primary" />
               <div className="text-left">
                 <div className="font-semibold text-sm">My Classes</div>
-                <div className="text-xs text-muted-foreground">View rosters</div>
+                <div className="text-xs text-muted-foreground">
+                  View rosters
+                </div>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </Link>
         </Button>
 
-        <Button asChild variant="outline" className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
+        <Button
+          asChild
+          variant="outline"
+          className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
           <Link href="/teacher/courses">
             <div className="flex items-center gap-3">
               <Presentation className="h-5 w-5 text-primary" />
               <div className="text-left">
                 <div className="font-semibold text-sm">My Courses</div>
-                <div className="text-xs text-muted-foreground">Course materials</div>
+                <div className="text-xs text-muted-foreground">
+                  Course materials
+                </div>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </Link>
         </Button>
 
-        <Button asChild variant="outline" className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
+        <Button
+          asChild
+          variant="outline"
+          className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
           <Link href="/teacher/attendance">
             <div className="flex items-center gap-3">
               <CalendarCheck2 className="h-5 w-5 text-primary" />
               <div className="text-left">
                 <div className="font-semibold text-sm">Attendance</div>
-                <div className="text-xs text-muted-foreground">Record attendance</div>
+                <div className="text-xs text-muted-foreground">
+                  Record attendance
+                </div>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </Link>
         </Button>
 
-        <Button asChild variant="outline" className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
+        <Button
+          asChild
+          variant="outline"
+          className="h-auto p-4 justify-between bg-card hover:bg-muted/50">
           <Link href="/teacher/grades">
             <div className="flex items-center gap-3">
               <GraduationCap className="h-5 w-5 text-primary" />
               <div className="text-left">
                 <div className="font-semibold text-sm">Exams & Grades</div>
-                <div className="text-xs text-muted-foreground">Grade students</div>
+                <div className="text-xs text-muted-foreground">
+                  Grade students
+                </div>
               </div>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
@@ -326,7 +369,9 @@ export default function TeacherDashboard() {
       {/* Assigned Classes Overview with DataTable */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">Assigned Classes Overview</h2>
+          <h2 className="text-xl font-semibold tracking-tight">
+            Assigned Classes Overview
+          </h2>
           <p className="text-sm text-muted-foreground">
             Complete list of classrooms assigned to your account.
           </p>
@@ -341,7 +386,8 @@ export default function TeacherDashboard() {
             <CardHeader>
               <CardTitle>No classes currently assigned</CardTitle>
               <CardDescription>
-                You have not been assigned to any classrooms for this academic year yet.
+                You have not been assigned to any classrooms for this academic
+                year yet.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -352,4 +398,3 @@ export default function TeacherDashboard() {
     </div>
   );
 }
-
