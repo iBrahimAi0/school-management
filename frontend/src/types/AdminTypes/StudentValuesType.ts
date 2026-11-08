@@ -9,7 +9,8 @@ export type StudentTypes = {
   password: string;
   password_confirmation: string;
   updated_at: string;
-  student_parent_id: number;
+  student_parent_id?: number | null;
+  classe_id?: number | null;
   parent?: {
     id: number;
     first_name: string;

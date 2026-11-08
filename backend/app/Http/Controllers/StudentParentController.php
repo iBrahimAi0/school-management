@@ -6,6 +6,8 @@ use App\Http\Requests\StoreStudentParentRequest;
 use App\Http\Requests\UpdateStudentParentRequest;
 use App\Http\Resources\StudentParentResource;
 use App\Models\StudentParent;
+use App\Models\User;
+use Illuminate\Http\Request;
 use DateTime;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,8 +18,12 @@ class StudentParentController extends Controller
      */
     public function index()
     {
-
-        return StudentParentResource::collection(StudentParent::all());
+        return StudentParentResource::collection(
+            StudentParent::with(['students:id,first_name,last_name,email,student_parent_id,classe_id'])
+                ->withCount('students')
+                ->latest()
+                ->get()
+        );
     }
 
     /**
@@ -89,5 +95,45 @@ class StudentParentController extends Controller
         $studentParent->delete();
 
         return new StudentParentResource($studentParent);
+    }
+
+    public function children(StudentParent $studentParent)
+    {
+        $children = User::where('student_parent_id', $studentParent->id)
+            ->with(['classe:id,name,code'])
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'children' => $children,
+            'message' => 'Parent children retrieved successfully'
+        ]);
+    }
+
+    public function assignStudent(Request $request, StudentParent $studentParent)
+    {
+        $data = $request->validate([
+            'student_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $student = User::findOrFail($data['student_id']);
+        $student->update(['student_parent_id' => $studentParent->id]);
+        $student->load(['classe:id,name,code', 'studentParent:id,first_name,last_name']);
+
+        return response()->json([
+            'student' => $student,
+            'message' => "Student {$student->first_name} {$student->last_name} assigned successfully"
+        ]);
+    }
+
+    public function unassignStudent(StudentParent $studentParent, User $student)
+    {
+        if ($student->student_parent_id === $studentParent->id) {
+            $student->update(['student_parent_id' => null]);
+        }
+
+        return response()->json([
+            'message' => 'Student unassigned from parent successfully'
+        ]);
     }
 }

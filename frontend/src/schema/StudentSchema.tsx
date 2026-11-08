@@ -21,10 +21,18 @@ export const StudentSchema = z
 
     student_parent_id: z.preprocess(
       (val) =>
-        val === "" || val === null || val === undefined
-          ? undefined
+        val === "" || val === null || val === undefined || val === "none"
+          ? null
           : Number(val),
-      z.number("Please choose a parent").positive("Please choose a parent"),
+      z.number().nullable().optional(),
+    ),
+
+    classe_id: z.preprocess(
+      (val) =>
+        val === "" || val === null || val === undefined || val === "none"
+          ? null
+          : Number(val),
+      z.number().nullable().optional(),
     ),
   })
   .refine((data) => data.password === data.password_confirmation, {

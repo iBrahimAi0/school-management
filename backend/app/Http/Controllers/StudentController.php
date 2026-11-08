@@ -76,6 +76,7 @@ class StudentController extends Controller
         $formFields['last_login_date'] = now();
 
         $student = User::create($formFields);
+        $student->load(['studentParent:id,first_name,last_name', 'classe:id,name,code']);
 
         return response()->json([
             'student' => $student,
@@ -99,7 +100,7 @@ class StudentController extends Controller
 
         $student->update($data);
 
-        $student->refresh()->load(['studentParent:id,first_name,last_name']);
+        $student->refresh()->load(['studentParent:id,first_name,last_name', 'classe:id,name,code']);
 
         return response()->json([
             'student' => $student,

@@ -89,6 +89,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/parents/{studentParent}', [StudentParentController::class, 'destroy'])
         ->middleware('abilities:parents:delete');
+
+    Route::get('/parents/{studentParent}/children', [StudentParentController::class, 'children']);
+    Route::post('/parents/{studentParent}/assign-student', [StudentParentController::class, 'assignStudent']);
+    Route::delete('/parents/{studentParent}/unassign-student/{student}', [StudentParentController::class, 'unassignStudent']);
 });
 
 

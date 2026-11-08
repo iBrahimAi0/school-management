@@ -5,10 +5,11 @@ import ParentApi from "@/api/Parent/ParentApi";
 import { DataTable } from "../../DataTable/DataTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { ArrowDownIcon, ArrowUpIcon, Trash2Icon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, Trash2Icon, Users } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { DataTableFeatures } from "../../DataTable/data-table-features";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,6 +35,7 @@ import {
 } from "../../ui/sheet";
 import { Sheet } from "@/components/ui/sheet";
 import { ParentsForm } from "./ParentsForm";
+import { AssignStudentModal } from "./AssignStudentModal";
 import { ParentValuesType } from "@/types/AdminTypes/ParentValuesType";
 import { useUserContext } from "@/context/UserProvider";
 
@@ -50,23 +52,21 @@ export type ParentsValuesTypes = {
   updated_at: string;
 };
 const ParentsList = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any[]>([]);
+  const [assignModalParent, setAssignModalParent] = useState<any | null>(null);
   const { updateParent } = useUserContext();
 
+  const fetchParents = async () => {
+    try {
+      const response = await ParentApi.getParents();
+      const list = response.data?.data ?? response.data ?? [];
+      setData(list);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchParents = async () => {
-      try {
-        const response = await ParentApi.getParents();
-        const { data } = response.data;
-        setData(data);
-      } catch (error) {
-        console.log(error);
-
-        throw error;
-      } finally {
-      }
-    };
-
     fetchParents();
   }, []);
   const columnHelper = createColumnHelper<
@@ -264,6 +264,38 @@ const ParentsList = () => {
         );
       },
     }),
+    columnHelper.accessor(
+      (row: any) => row.students_count ?? row.students?.length ?? 0,
+      {
+        id: "children_count",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() =>
+              column.toggleSorting(column.getIsSorted() === "asc")
+            }>
+            Children
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row }: any) => {
+          const count =
+            row.original.students_count ?? row.original.students?.length ?? 0;
+          return (
+            <Badge
+              variant="outline"
+              className="font-mono text-xs flex items-center gap-1 w-fit bg-muted/40">
+              <Users className="h-3 w-3 text-primary" />
+              {count} {count === 1 ? "Child" : "Children"}
+            </Badge>
+          );
+        },
+      }
+    ),
     columnHelper.accessor("updated_at", {
       header: ({ column }) => {
         return (
@@ -323,10 +355,19 @@ const ParentsList = () => {
         };
 
         return (
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1.5"
+              onClick={() => setAssignModalParent(row.original)}>
+              <Users className="h-3.5 w-3.5 text-primary" />
+              Children
+            </Button>
+
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="default">Update</Button>
+                <Button size="sm" variant="default">Update</Button>
               </SheetTrigger>
 
               <SheetContent className="overflow-y-auto px-5">
@@ -352,7 +393,7 @@ const ParentsList = () => {
             </Sheet>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete</Button>
+                <Button size="sm" variant="destructive">Delete</Button>
               </AlertDialogTrigger>
               <AlertDialogContent size="sm">
                 <AlertDialogHeader>
@@ -386,6 +427,13 @@ const ParentsList = () => {
   return (
     <div className="container mx-auto py-10">
       <DataTable columns={columns} data={data} />
+
+      <AssignStudentModal
+        isOpen={!!assignModalParent}
+        parent={assignModalParent}
+        onClose={() => setAssignModalParent(null)}
+        onChanged={fetchParents}
+      />
     </div>
   );
 };

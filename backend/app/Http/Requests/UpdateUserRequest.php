@@ -47,8 +47,8 @@ class UpdateUserRequest extends FormRequest
                 'required',
                 'string',
                 'email',
-                Rule::unique('student_parents')
-                    ->ignore($this->route('student')),
+                Rule::unique('users')
+                    ->ignore($this->route('student')?->id ?? $this->route('student')),
             ],
 
             'password' => [
@@ -59,7 +59,11 @@ class UpdateUserRequest extends FormRequest
             ],
             'student_parent_id' => [
                 'nullable',
-
+                'exists:student_parents,id',
+            ],
+            'classe_id' => [
+                'nullable',
+                'exists:classes,id',
             ],
         ];
     }

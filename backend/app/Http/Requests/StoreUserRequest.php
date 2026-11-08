@@ -41,10 +41,11 @@ class StoreUserRequest extends FormRequest
                 Rule::enum(BloodEnum::class),
             ],
 
-            'email' => 'required|string|email|unique:student_parents,email',
+            'email' => 'required|string|email|unique:users,email',
 
             'password' => 'required|min:5|max:50|confirmed',
-            'student_parent_id' => 'exists:users,id',
+            'student_parent_id' => 'nullable|exists:student_parents,id',
+            'classe_id' => 'nullable|exists:classes,id',
         ];
     }
 }

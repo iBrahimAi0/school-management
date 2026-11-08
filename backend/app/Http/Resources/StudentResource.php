@@ -23,13 +23,18 @@ class StudentResource extends JsonResource
             'gender' => $this->gender,
             'email' => $this->email,
             'blood_type' => $this->blood_type,
-            'parent' => $this->whenLoaded('studentParent', function () {
-                return [
-                    'id' => $this->studentParent->id,
-                    'first_name' => $this->studentParent->first_name,
-                    'last_name' => $this->studentParent->last_name,
-                ];
-            }),
+            'student_parent_id' => $this->student_parent_id,
+            'classe_id' => $this->classe_id,
+            'parent' => $this->studentParent ? [
+                'id' => $this->studentParent->id,
+                'first_name' => $this->studentParent->first_name,
+                'last_name' => $this->studentParent->last_name,
+            ] : null,
+            'student_parent' => $this->studentParent ? [
+                'id' => $this->studentParent->id,
+                'first_name' => $this->studentParent->first_name,
+                'last_name' => $this->studentParent->last_name,
+            ] : null,
             'classe' => $this->classe ? [
                 'id' => $this->classe->id,
                 'name' => $this->classe->name,

@@ -27,43 +27,66 @@ import { toast } from "sonner";
 import { StudentSchema } from "@/schema/StudentSchema";
 import { useEffect, useState } from "react";
 import ParentApi from "@/api/Parent/ParentApi";
+import ClasseApi from "@/api/Classe/ClasseApi";
 
 interface Parent {
-  id: string;
+  id: string | number;
   first_name: string;
   last_name: string;
-  date_of_birth: string;
-  gender: "f" | "m";
-  blood_type: string;
-  address: string;
-  phone: string;
-  email: string;
-  password: string;
+  date_of_birth?: string;
+  gender?: "f" | "m";
+  blood_type?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
 }
 
 export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
   const bloodTypes = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
   const [parents, setParents] = useState<Parent[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchParents = async () => {
-      const studentParent = await ParentApi.getParents();
+    const loadOptions = async () => {
+      try {
+        const [parentsRes, classesRes] = await Promise.allSettled([
+          ParentApi.getParents(),
+          ClasseApi.getClasse(),
+        ]);
 
-      const { data } = studentParent.data;
+        if (parentsRes.status === "fulfilled") {
+          const list = parentsRes.value.data?.data ?? parentsRes.value.data ?? [];
+          setParents(list);
+        }
 
-      setParents(data);
+        if (classesRes.status === "fulfilled") {
+          const list = classesRes.value.data?.classes ?? classesRes.value.data ?? [];
+          setClasses(list);
+        }
+      } catch (e) {
+        console.error("Failed loading options:", e);
+      }
     };
 
-    fetchParents();
+    loadOptions();
   }, []);
+
   const formatDateForInput = (dateStr?: string) => {
     if (!dateStr) return "";
-    // If it's already YYYY-MM-DD
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return "";
     return date.toISOString().split("T")[0];
+  };
+
+  const getParentIdVal = (val: any) => {
+    if (!val) return "";
+    return String(val?.student_parent_id ?? val?.student_parent?.id ?? val?.parent?.id ?? "");
+  };
+
+  const getClasseIdVal = (val: any) => {
+    if (!val) return "";
+    return String(val?.classe_id ?? val?.classe?.id ?? "");
   };
 
   type StudentValues = z.infer<typeof StudentSchema>;
@@ -71,6 +94,7 @@ export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
     message?: string;
     errors?: Record<string, string[]>;
   };
+
   const form = useForm<
     z.input<typeof StudentSchema>,
     unknown,
@@ -78,19 +102,19 @@ export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
   >({
     resolver: zodResolver(StudentSchema),
     defaultValues: {
-      //new
       first_name: values?.first_name ?? "",
       last_name: values?.last_name ?? "",
       date_of_birth: formatDateForInput(values?.date_of_birth) ?? "",
       gender: values?.gender ?? "m",
       blood_type: values?.blood_type ?? "",
-      student_parent_id: values?.student_parent_id,
+      student_parent_id: getParentIdVal(values),
+      classe_id: getClasseIdVal(values),
       email: values?.email ?? "",
       password: "",
       password_confirmation: "",
     },
   });
-  //new
+
   useEffect(() => {
     if (values) {
       form.reset({
@@ -99,7 +123,8 @@ export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
         date_of_birth: formatDateForInput(values?.date_of_birth) ?? "",
         gender: values.gender ?? "m",
         blood_type: values.blood_type ?? "",
-        student_parent_id: values.student_parent_id,
+        student_parent_id: getParentIdVal(values),
+        classe_id: getClasseIdVal(values),
         email: values.email ?? "",
         password: "",
         password_confirmation: "",
@@ -108,29 +133,27 @@ export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
   }, [values, form]);
 
   const onSubmit = async (values: StudentValues) => {
+    let loaderToast;
     try {
-      const loaderToast = toast.loading(
+      loaderToast = toast.loading(
         mode === "create" ? "Creating student..." : "Updating student...",
       );
 
       const response = await handleSubmit(values);
-      if (mode === "update" && onUpdate) {
-        onUpdate(response);
-      }
       toast.dismiss(loaderToast);
-      if (response.status === 200) {
+      if (mode === "update" && onUpdate) {
+        onUpdate(response.data?.student ?? response);
+      }
+      if (response && (response.status === 200 || response.status === 201)) {
         toast.success("Success", {
-          description: response.data.message,
-          action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
-          },
+          description: response.data?.message ?? "Saved successfully",
           position: "bottom-right",
         });
       }
       form.reset();
       return response;
     } catch (error: unknown) {
+      if (loaderToast) toast.dismiss(loaderToast);
       if (isAxiosError<LaravelValidationResponse>(error)) {
         const status = error.response?.status;
         const data = error.response?.data;
@@ -142,12 +165,13 @@ export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
               message: messages[0],
             });
           });
-
+          toast.error(data.message || "Please fix validation errors");
           return;
         }
       }
 
       console.error("Something went wrong:", error);
+      toast.error("Failed to save student. Please try again.");
     }
   };
   return (
@@ -260,15 +284,17 @@ export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
             </p>
           )}
           <Field>
-            <FieldLabel>Student Parent</FieldLabel>
+            <FieldLabel>Student Parent (Guardian)</FieldLabel>
 
             <Controller
               control={form.control}
               name="student_parent_id"
               render={({ field }) => (
                 <Select
-                  value={field.value ? String(field.value) : ""}
-                  onValueChange={field.onChange}>
+                  value={field.value ? String(field.value) : "none"}
+                  onValueChange={(val) =>
+                    field.onChange(val === "none" ? "" : val)
+                  }>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a parent" />
                   </SelectTrigger>
@@ -276,10 +302,11 @@ export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Parent</SelectLabel>
-
+                      <SelectItem value="none">No Parent (Unassigned)</SelectItem>
                       {parents.map((parent) => (
                         <SelectItem key={parent.id} value={String(parent.id)}>
                           {`${parent.first_name} ${parent.last_name}`}
+                          {parent.email ? ` (${parent.email})` : ""}
                         </SelectItem>
                       ))}
                     </SelectGroup>
@@ -291,6 +318,43 @@ export function StudentsForm({ handleSubmit, values, onUpdate, mode }: any) {
           {form.formState.errors.student_parent_id && (
             <p className="text-sm text-destructive">
               {form.formState.errors.student_parent_id?.message}
+            </p>
+          )}
+
+          <Field>
+            <FieldLabel>Assigned Classroom</FieldLabel>
+
+            <Controller
+              control={form.control}
+              name="classe_id"
+              render={({ field }) => (
+                <Select
+                  value={field.value ? String(field.value) : "none"}
+                  onValueChange={(val) =>
+                    field.onChange(val === "none" ? "" : val)
+                  }>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a classroom" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Classroom</SelectLabel>
+                      <SelectItem value="none">No Class (Unassigned)</SelectItem>
+                      {classes.map((cls) => (
+                        <SelectItem key={cls.id} value={String(cls.id)}>
+                          {cls.name} ({cls.code})
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Field>
+          {form.formState.errors.classe_id && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.classe_id?.message}
             </p>
           )}
           <Field>

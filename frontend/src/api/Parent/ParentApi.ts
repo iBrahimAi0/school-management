@@ -44,6 +44,19 @@ const ParentApi = {
   getPortalData: async () => {
     return await axiosClient.get("/api/parent/portal-data");
   },
+  getChildren: async (parentId: string | number) => {
+    return await axiosClient.get(`/api/parents/${parentId}/children`);
+  },
+  assignStudent: async (parentId: string | number, studentId: string | number) => {
+    return await axiosClient.post(`/api/parents/${parentId}/assign-student`, {
+      student_id: Number(studentId),
+    });
+  },
+  unassignStudent: async (parentId: string | number, studentId: string | number) => {
+    return await axiosClient.delete(
+      `/api/parents/${parentId}/unassign-student/${studentId}`
+    );
+  },
 };
 
 export default ParentApi;

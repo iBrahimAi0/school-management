@@ -24,6 +24,15 @@ class StudentParentResource extends JsonResource
             'address' => $this->address,
             'phone' => $this->phone,
             'email' => $this->email,
+            'students_count' => $this->students_count ?? $this->students()->count(),
+            'students' => $this->relationLoaded('students')
+                ? $this->students->map(fn($s) => [
+                    'id' => $s->id,
+                    'first_name' => $s->first_name,
+                    'last_name' => $s->last_name,
+                    'email' => $s->email,
+                ])
+                : [],
             'last_login_date' => $this->last_login_date,
             'updated_at' => $this->updated_at?->toISOString(),
         ];
