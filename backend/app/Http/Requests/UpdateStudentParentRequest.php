@@ -24,16 +24,18 @@ class UpdateStudentParentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $parentId = $this->route('studentParent')?->id ?? $this->route('studentParent') ?? $this->id;
+
         return [
             'first_name' => [
                 'required',
-                'min:3',
+                'min:2',
                 'max:50',
             ],
 
             'last_name' => [
                 'required',
-                'min:3',
+                'min:2',
                 'max:50',
             ],
 
@@ -52,12 +54,23 @@ class UpdateStudentParentRequest extends FormRequest
                 Rule::enum(BloodEnum::class),
             ],
 
+            'address' => [
+                'required',
+                'max:255',
+            ],
+
+            'phone' => [
+                'required',
+                'string',
+                'max:25',
+                Rule::unique('student_parents', 'phone')->ignore($parentId),
+            ],
+
             'email' => [
                 'required',
                 'string',
                 'email',
-                Rule::unique('users')
-                    ->ignore($this->user->id),
+                Rule::unique('student_parents', 'email')->ignore($parentId),
             ],
 
             'password' => [

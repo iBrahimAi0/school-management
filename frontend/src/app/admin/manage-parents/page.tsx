@@ -47,6 +47,8 @@ export default function ManageParents() {
             <CardContent>
               <ParentsForm
                 handleSubmit={(values: ParentValuesType) => addParent(values)}
+                mode="create"
+                onSuccess={() => setIsActive(true)}
               />
             </CardContent>
           </Card>

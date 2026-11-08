@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -27,43 +28,93 @@ import { ParentSchema } from "@/schema/ParentSchema";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 
-export function ParentsForm({ handleSubmit, values, onUpdate }: any) {
+export function ParentsForm({
+  handleSubmit,
+  values,
+  onUpdate,
+  onSuccess,
+  mode = "create",
+}: any) {
   const bloodTypes = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
+
+  const formatDateForInput = (dateStr?: string) => {
+    if (!dateStr) return "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "";
+    return date.toISOString().split("T")[0];
+  };
+
   type ParentValues = z.infer<typeof ParentSchema>;
   type LaravelValidationResponse = {
     message?: string;
     errors?: Record<string, string[]>;
   };
-  /* const defualtGender = values.gender === "Male" ? "m" : "f"; */
+
   const form = useForm<
     z.input<typeof ParentSchema>,
     unknown,
     z.output<typeof ParentSchema>
   >({
     resolver: zodResolver(ParentSchema),
-    defaultValues: values,
+    defaultValues: {
+      first_name: values?.first_name ?? "",
+      last_name: values?.last_name ?? "",
+      date_of_birth: formatDateForInput(values?.date_of_birth) ?? "",
+      gender: values?.gender ?? "m",
+      blood_type: values?.blood_type ?? "",
+      address: values?.address ?? "",
+      phone: values?.phone ?? "",
+      email: values?.email ?? "",
+      password: "",
+      password_confirmation: "",
+    },
   });
+
+  useEffect(() => {
+    if (mode === "update" && values) {
+      form.reset({
+        first_name: values.first_name ?? "",
+        last_name: values.last_name ?? "",
+        date_of_birth: formatDateForInput(values?.date_of_birth) ?? "",
+        gender: values.gender ?? "m",
+        blood_type: values.blood_type ?? "",
+        address: values?.address ?? "",
+        phone: values.phone ?? "",
+        email: values.email ?? "",
+        password: "",
+        password_confirmation: "",
+      });
+    }
+  }, [values, mode, form]);
+
   const onSubmit = async (values: ParentValues) => {
+    let loaderToast;
     try {
-      const LoaderToast = toast.loading("Updating in progress");
+      loaderToast = toast.loading(
+        mode === "create" ? "Creating parent account..." : "Updating parent account..."
+      );
       const response = await handleSubmit(values);
-      const updatedParent = response.data.parent;
-      onUpdate(updatedParent);
-      toast.dismiss(LoaderToast);
-      if (response.status === 200) {
+      toast.dismiss(loaderToast);
+
+      if (response && (response.status === 200 || response.status === 201)) {
         toast.success("Success", {
-          description: response.data.message,
-          action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
-          },
+          description: response.data?.message || "Parent saved successfully",
           position: "bottom-right",
         });
+        const updatedParent = response.data?.parent;
+        if (onUpdate && updatedParent) {
+          onUpdate(updatedParent);
+        }
+        if (onSuccess) {
+          onSuccess();
+        }
       }
 
       form.reset();
       return response;
     } catch (error: unknown) {
+      if (loaderToast) toast.dismiss(loaderToast);
       if (isAxiosError<LaravelValidationResponse>(error)) {
         const status = error.response?.status;
         const data = error.response?.data;
@@ -75,12 +126,13 @@ export function ParentsForm({ handleSubmit, values, onUpdate }: any) {
               message: messages[0],
             });
           });
-
+          toast.error(data.message || "Please fix validation errors");
           return;
         }
       }
 
       console.error("Something went wrong:", error);
+      toast.error("Failed to save parent. Please try again.");
     }
   };
   return (

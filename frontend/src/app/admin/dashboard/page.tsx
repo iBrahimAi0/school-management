@@ -6,6 +6,7 @@ import {
   GraduationCap,
   ShieldAlert,
   Users,
+  UserRoundGroup,
   Layers,
   ArrowRight,
 } from "lucide-react";
@@ -121,6 +122,12 @@ export default function AdminDashboard() {
               <Link href="/admin/manage-students" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 <span>Students Directory</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/manage-parents" className="flex items-center gap-2">
+                <UserRoundGroup className="h-4 w-4" />
+                <span>Parents Directory</span>
               </Link>
             </Button>
             <Button asChild variant="outline">

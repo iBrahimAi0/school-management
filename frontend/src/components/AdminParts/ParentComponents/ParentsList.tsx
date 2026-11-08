@@ -298,20 +298,21 @@ const ParentsList = () => {
       cell: ({ row }) => {
         const { id, first_name, last_name } = row.original;
         const handleDelete = async () => {
-          const deletingLoaderToast = toast.loading("Deleting in progress");
-          const response = await ParentApi.deteleParent(id);
-          setData(data.filter((p: any) => p.id !== response.data.data.id));
-          toast.dismiss(deletingLoaderToast);
-          if (response.status === 200) {
+          let deletingLoaderToast;
+          try {
+            deletingLoaderToast = toast.loading("Deleting in progress");
+            const response = await ParentApi.deleteParent(id);
+            const deletedId = response.data?.data?.id ?? id;
+            setData((prev: any) => prev.filter((p: any) => p.id !== deletedId));
+            toast.dismiss(deletingLoaderToast);
             toast.success("Parent deleted", {
-              description: "Parent has been deleetd successfully",
-              icon: <Trash2Icon />,
-              action: {
-                label: "Undo",
-                onClick: () => console.log("Undo"),
-              },
+              description: "Parent has been deleted successfully",
               position: "bottom-right",
             });
+          } catch (error) {
+            if (deletingLoaderToast) toast.dismiss(deletingLoaderToast);
+            toast.error("Failed to delete parent.");
+            console.error(error);
           }
         };
 
@@ -343,6 +344,7 @@ const ParentsList = () => {
                     updateParent(values, id)
                   }
                   onUpdate={handleUpdatedParent}
+                  mode="update"
                 />
 
                 <SheetFooter></SheetFooter>

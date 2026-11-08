@@ -23,31 +23,31 @@ class StoreStudentParentRequest extends FormRequest
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-{
-    return [
-        'first_name' => 'required|min:3|max:50',
+    {
+        return [
+            'first_name' => 'required|min:2|max:50',
 
-        'last_name' => 'required|min:3|max:50',
+            'last_name' => 'required|min:2|max:50',
 
-        'date_of_birth' => 'required|date',
+            'date_of_birth' => 'required|date',
 
-        'gender' => [
-            'required',
-            Rule::in(['m', 'f']),
-        ],
+            'gender' => [
+                'required',
+                Rule::in(['m', 'f']),
+            ],
 
-        'blood_type' => [
-            'required',
-            Rule::enum(BloodEnum::class),
-        ],
+            'blood_type' => [
+                'required',
+                Rule::enum(BloodEnum::class),
+            ],
 
-        'address' => 'required|max:255',
+            'address' => 'required|max:255',
 
-        'phone' => 'required|max:10|unique:student_parents,phone|regex:/^0[5-7][0-9]{8}$/',
+            'phone' => 'required|string|max:25|unique:student_parents,phone',
 
-        'email' => 'required|string|email|unique:student_parents,email',
+            'email' => 'required|string|email|unique:student_parents,email',
 
-        'password' => 'required|min:5|max:50|confirmed',
-    ];
-}
+            'password' => 'required|min:5|max:50|confirmed',
+        ];
+    }
 }

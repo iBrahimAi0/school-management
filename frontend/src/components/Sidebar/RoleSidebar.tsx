@@ -149,6 +149,11 @@ export function RoleSidebar({
           icon: Users,
         },
         {
+          title: "Parents",
+          url: "/admin/manage-parents",
+          icon: UserRoundGroup,
+        },
+        {
           title: "Classes & Courses",
           url: "#",
           icon: BookOpen,
@@ -193,11 +198,6 @@ export function RoleSidebar({
               url: "/admin/manage-attendance-records",
             },
           ],
-        },
-        {
-          title: "User Directory",
-          url: "/admin/manage-parents",
-          icon: ShieldCheck,
         },
       ],
     },

@@ -5,7 +5,7 @@ import { isAxiosError } from "axios";
 const ParentApi = {
   addParent: async (values: ParentValuesType) => {
     try {
-      return await axiosClient.post("/api/parents", { values });
+      return await axiosClient.post("/api/parents", values);
     } catch (error: any) {
       console.log(error.response?.data);
       console.log(error.response?.status);
