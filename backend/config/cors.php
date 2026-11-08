@@ -3,7 +3,7 @@
 // config/cors.php
 return [
     'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
-    
+
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
@@ -11,8 +11,9 @@ return [
         'http://127.0.0.1:3000',
         'http://localhost:3001',
         'http://127.0.0.1:3001',
+        'https://school-management-rho-olive.vercel.app',
     ],
-    
+
     'allowed_headers' => ['*'],
 
     'allowed_origins_patterns' => [],
@@ -24,4 +25,3 @@ return [
 
     'supports_credentials' => true,
 ];
-
