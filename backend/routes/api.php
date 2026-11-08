@@ -17,6 +17,42 @@ use App\Http\Controllers\TeacherController;
 use App\Models\AttendanceRecord;
 use App\Models\AttendanceSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Http\Request;
+
+// Utility endpoint to clear cache and optionally seed database in deployed environments
+Route::get('/seed-database', function (Request $request) {
+    if ($request->query('secret') !== 'school2026' && !app()->isLocal()) {
+        return response()->json(['error' => 'Unauthorized. Provide valid secret token.'], 403);
+    }
+
+    try {
+        Artisan::call('config:clear');
+        Artisan::call('cache:clear');
+        Artisan::call('route:clear');
+        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('db:seed', ['--force' => true]);
+        $output = Artisan::output();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Database migrated, seeded, and cache cleared successfully!',
+            'output' => $output,
+            'accounts' => [
+                'admin'   => ['email' => 'admin@example.com', 'password' => 'admin123456'],
+                'teacher' => ['email' => 'teacher@example.com', 'password' => 'teacher123456'],
+                'student' => ['email' => 'student@example.com', 'password' => 'student123456'],
+                'parent'  => ['email' => 'parent@example.com', 'password' => 'parent123456'],
+            ],
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ], 500);
+    }
+});
 
 // Public auth endpoints
 Route::post('/login', [MultiAuthController::class, 'login']);

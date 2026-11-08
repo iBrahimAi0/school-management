@@ -44,27 +44,88 @@ export function StudentLogin() {
       await login(values);
       // Dynamic redirection is handled inside login() based on authData.role
     } catch (error: unknown) {
-      const response = isAxiosError<LoginErrorResponse>(error)
-        ? error.response?.data
-        : undefined;
-
-      form.setError("email", {
-        message:
-          response?.errors?.email?.[0] ??
-          "Unable to log in. Please check your details and try again.",
-      });
+      if (isAxiosError<LoginErrorResponse>(error)) {
+        if (!error.response) {
+          form.setError("email", {
+            message:
+              "Network Error: Unable to reach the backend API server. Please check CORS and network settings.",
+          });
+          return;
+        }
+        const response = error.response.data as any;
+        form.setError("email", {
+          message:
+            response?.errors?.email?.[0] ??
+            response?.message ??
+            "Invalid credentials. Please verify your email and password.",
+        });
+      } else {
+        form.setError("email", {
+          message: "Unable to log in. Please check your details and try again.",
+        });
+      }
     }
   };
 
+  const fillCredentials = (email: string, pass: string) => {
+    form.setValue("email", email, { shouldValidate: true });
+    form.setValue("password", pass, { shouldValidate: true });
+  };
+
   return (
-    <Card className="w-full sm:max-w-md">
+    <Card className="w-full sm:max-w-md shadow-lg border-muted/80">
       <CardHeader>
         <CardTitle className="text-xl">Sign In</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Sign in with your Student, Teacher, or Admin account.
+          Sign in with your Admin, Teacher, Student, or Parent account.
         </p>
       </CardHeader>
       <CardContent>
+        {/* Quick Demo Fill Buttons */}
+        <div className="mb-4 rounded-lg border bg-muted/40 p-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            Quick Fill Demo Accounts:
+          </p>
+          <div className="grid grid-cols-2 gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs justify-start h-8 px-2"
+              onClick={() => fillCredentials("admin@example.com", "admin123456")}
+            >
+              🔑 Admin
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs justify-start h-8 px-2"
+              onClick={() => fillCredentials("teacher@example.com", "teacher123456")}
+            >
+              👨‍🏫 Teacher
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs justify-start h-8 px-2"
+              onClick={() => fillCredentials("student@example.com", "student123456")}
+            >
+              🎓 Student
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs justify-start h-8 px-2"
+              onClick={() => fillCredentials("parent@example.com", "parent123456")}
+            >
+              👨‍👩‍👧 Parent
+            </Button>
+          </div>
+        </div>
+
         <form id="form-rhf-input" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller

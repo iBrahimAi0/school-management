@@ -2,7 +2,7 @@
 
 // config/cors.php
 return [
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout', '*'],
 
     'allowed_methods' => ['*'],
 
@@ -12,16 +12,20 @@ return [
         'http://localhost:3001',
         'http://127.0.0.1:3001',
         'https://school-management-rho-olive.vercel.app',
+        'https://school-management.ethiodeploy.app',
+        env('FRONTEND_URL', 'http://localhost:3000'),
+    ],
+
+    'allowed_origins_patterns' => [
+        '#.*#',
     ],
 
     'allowed_headers' => ['*'],
 
-    'allowed_origins_patterns' => [],
+    'exposed_headers' => ['*'],
 
-
-    'exposed_headers' => [],
-
-    'max_age' => 0,
+    'max_age' => 86400,
 
     'supports_credentials' => true,
 ];
+
